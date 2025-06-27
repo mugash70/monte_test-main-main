@@ -11,7 +11,8 @@ export default defineNuxtConfig({
   },
   css: [
     'vuetify/styles',
-    '@mdi/font/css/materialdesignicons.css'
+    '@mdi/font/css/materialdesignicons.css',
+    '~/assets/css/layout.css'
   ],
   nitro: {
     compatibilityDate: '2025-06-19'

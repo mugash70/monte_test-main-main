@@ -1,8 +1,6 @@
 // scripts/seed-locales.ts
-// @ts-nocheck
 import { PrismaClient } from '../generated/prisma';
-import * as fs from 'fs/promises';
-
+import fs from 'fs/promises';
 const prisma = new PrismaClient();
 
 async function seedLocales(locale: string, path: string): Promise<void> {
@@ -27,14 +25,6 @@ async function seedLocales(locale: string, path: string): Promise<void> {
   }
 }
 
-async function main() {
-  await seedLocales('en', 'locales/en.json');
-  await seedLocales('mn', 'locales/mn.json');
-  await seedLocales('ch', 'locales/ch.json');
-  await prisma.$disconnect();
-}
-
-main().catch((e) => {
-  console.error(e);
-  process.exit(1);
-});
+await seedLocales('en', 'locales/en.json');
+await seedLocales('mn', 'locales/mn.json');
+await seedLocales('ch', 'locales/ch.json');

@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50" style="margin-top:4rem;">
-    <div class="p-4 max-w-7xl mx-auto">
+  <div class="page-container min-h-screen bg-gray-50">
+    <div class="content-wrapper max-w-7xl mx-auto">
       
       <!-- Search & Controls -->
       <div class="bg-white rounded shadow p-3 mb-4">

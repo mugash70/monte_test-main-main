@@ -244,6 +244,7 @@ onBeforeUnmount(() => {
   position: relative;
   overflow: hidden;
   height: 75vh;
+  margin-top: -140px; /* Negative margin to account for main-content padding */
 }
 
 .carousel-wrapper {
@@ -505,9 +506,21 @@ padding-left: 40rem;
   }
 }
 
+@media (max-width: 768px) {
+  .hero-carousel {
+    margin-top: -120px; /* Adjust for mobile header height */
+  }
+}
+
 @media (max-width: 640px) {
   .card-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-carousel {
+    margin-top: -100px; /* Adjust for smaller screens */
   }
 }
 

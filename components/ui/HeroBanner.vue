@@ -2746,12 +2746,11 @@ const isMongolian = computed(() => locale.value === 'mn');
   background-position: center;
   display: flex;
   align-items: center;
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   height: 75vh;
   padding: 0 2rem;
+  margin-top: -140px; /* Negative margin to account for main-content padding */
 }
 
 .banner-content {
@@ -2765,7 +2764,7 @@ const isMongolian = computed(() => locale.value === 'mn');
   max-width: 800px;
   text-align: left;
   width: 100%;
-  margin-top: 120px;
+  margin-top: 200px; /* Increased to account for header space */
   margin-left: 50px;
 }
 
@@ -2809,12 +2808,27 @@ const isMongolian = computed(() => locale.value === 'mn');
 
   .external-banner {
     padding: 0 1rem;
+    margin-top: -120px; /* Adjust for mobile header height */
+  }
+
+  .banner-title-wrapper {
+    margin-top: 180px; /* Adjust for mobile */
+    margin-left: 20px;
   }
 }
 
 @media (max-width: 480px) {
   .banner-title {
     font-size: 2rem;
+  }
+
+  .external-banner {
+    margin-top: -100px; /* Adjust for smaller screens */
+  }
+
+  .banner-title-wrapper {
+    margin-top: 160px; /* Adjust for smaller screens */
+    margin-left: 15px;
   }
 }
 
