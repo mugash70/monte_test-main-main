@@ -1,12 +1,13 @@
 <template>
   <div>
     <HeroBanner :title="t('greenMonte.heroTitle')" image="/hero/green.jpg" />
-
+    <br/> <br/> <br/>
     <section class="tech-intro">
       <div class="tech-content">
         <p :class="{ 'vertical-head': isMongolian }">{{ t('greenMonte.intro') }}</p>
       </div>
     </section>
+
 
     <section class="projects-content">
       <div class="scope" :class="{ 'vertical-text': isMongolian }">

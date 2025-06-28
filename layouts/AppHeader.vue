@@ -18,13 +18,34 @@ import ManHeader from './ManHeader.vue'
 
 const isScrolled = ref(false)
 
+let ticking = false
+let lastScrollY = 0
+
 const handleScroll = () => {
-  isScrolled.value = window.scrollY > 50
+  if (!ticking) {
+    requestAnimationFrame(() => {
+      const currentScrollY = window.scrollY
+
+      // Only update if scroll position has changed significantly
+      if (Math.abs(currentScrollY - lastScrollY) > 5) {
+        isScrolled.value = currentScrollY > 50
+        lastScrollY = currentScrollY
+      }
+
+      ticking = false
+    })
+    ticking = true
+  }
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  // Use passive listener for better performance
+  window.addEventListener('scroll', handleScroll, { passive: true })
+  // Set initial state
+  isScrolled.value = window.scrollY > 50
+  lastScrollY = window.scrollY
 })
+
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
 })
@@ -40,6 +61,8 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   z-index: 1010;
+  transform: translateZ(0); /* Force hardware acceleration */
+  backface-visibility: hidden; /* Prevent flickering */
 }
 
 
@@ -48,7 +71,8 @@ onUnmounted(() => {
   position: sticky;
   top: 0;
   z-index: 1001; /* Lower than top header */
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: box-shadow 0.2s ease-out, background-color 0.2s ease-out;
+  will-change: box-shadow, background-color;
 }
 
 .main-header {
@@ -57,25 +81,27 @@ onUnmounted(() => {
   height: 100px;
   padding: 12px 0;
   border-bottom: 1px solid #f0f0f0;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: background-color 0.2s ease-out, border-bottom-color 0.2s ease-out;
+  will-change: background-color, border-bottom-color;
 }
 
 /* Smooth transition when header becomes sticky */
 .main-header-wrapper.sticky {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.98);
 }
 
 .main-header.sticky {
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.98);
   border-bottom: 1px solid rgba(240, 240, 240, 0.8);
 }
 
 /* Smooth slide-up transition */
 .slide-up-enter-active,
 .slide-up-leave-active {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: all 0.25s ease-out;
   transform-origin: top;
+  will-change: transform, opacity;
 }
 
 .slide-up-enter-from {
