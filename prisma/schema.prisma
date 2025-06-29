@@ -21,3 +21,60 @@ model Translation {
 
   @@unique([locale, key], name: "locale_key")
 }
+
+model News {
+  id          Int        @id @default(autoincrement())
+  slug        String     @unique
+  title       String
+  description String
+  content     String?
+  image       String?
+  date        DateTime   @default(now())
+  source      String?
+  views       Int        @default(0)
+  published   Boolean    @default(true)
+  locale      String     @default("en")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  files       NewsFile[]
+
+  @@index([slug])
+  @@index([locale])
+  @@index([published])
+  @@index([date])
+}
+
+model NewsFile {
+  id           Int    @id @default(autoincrement())
+  newsId       Int
+  filename     String
+  originalName String
+  path         String
+  size         Int
+  mimeType     String
+  createdAt    DateTime @default(now())
+  news         News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+}
+
+model MediaMaterial {
+  id            Int      @id @default(autoincrement())
+  title         String
+  description   String?
+  type          String   // 'video', 'image', 'pdf'
+  filename      String
+  originalName  String
+  path          String
+  thumbnailPath String?
+  size          Int
+  mimeType      String
+  duration      Int?     // for videos in seconds
+  dimensions    String?  // for images/videos "1920x1080"
+  published     Boolean  @default(true)
+  locale        String   @default("en")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([type])
+  @@index([locale])
+  @@index([published])
+}

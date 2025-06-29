@@ -40,11 +40,28 @@
         role="tab"
         :aria-selected="activeTab === 'translations'"
       >
-        <svg class="cms-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
-        </svg>
-        <span>Translations</span>
+        <span>Static Texts</span>
         <span class="cms-nav-badge">{{ totalItems || 0 }}</span>
+      </button>
+
+      <button
+        @click="activeTab = 'news'"
+        :class="['cms-nav-tab', { 'cms-nav-tab-active': activeTab === 'news' }]"
+        role="tab"
+        :aria-selected="activeTab === 'news'"
+      >
+        <span>News</span>
+        <span class="cms-nav-badge">{{ newsItems.length || 0 }}</span>
+      </button>
+
+      <button
+        @click="activeTab = 'media'"
+        :class="['cms-nav-tab', { 'cms-nav-tab-active': activeTab === 'media' }]"
+        role="tab"
+        :aria-selected="activeTab === 'media'"
+      >
+        <span>Media Materials</span>
+        <span class="cms-nav-badge">{{ mediaItems.length || 0 }}</span>
       </button>
 
       <button
@@ -53,10 +70,7 @@
         role="tab"
         :aria-selected="activeTab === 'images'"
       >
-        <svg class="cms-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-        </svg>
-        <span>Images</span>
+        <span>Static Images</span>
         <span class="cms-nav-badge">{{ images.length || 0 }}</span>
       </button>
 
@@ -66,10 +80,7 @@
         role="tab"
         :aria-selected="activeTab === 'videos'"
       >
-        <svg class="cms-nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-        </svg>
-        <span>Videos</span>
+        <span>Static Videos</span>
         <span class="cms-nav-badge">{{ videos.length || 0 }}</span>
       </button>
     </nav>
@@ -566,6 +577,8 @@
             </div>
           </div>
 
+
+
           <!-- Translation Edit Modal -->
           <div v-if="showEditModal" class="cms-modal-overlay" @click="closeEditModal">
             <div class="cms-modal" @click.stop>
@@ -746,9 +759,6 @@
             <!-- Empty State -->
             <div v-else class="text-center py-12">
               <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 max-w-md mx-auto">
-                <svg class="mx-auto h-16 w-16 text-green-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                </svg>
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">No images yet</h3>
                 <p class="text-gray-600 mb-4">Upload your first images to get started with your gallery</p>
                 <button
@@ -840,9 +850,6 @@
             <!-- Empty State -->
             <div v-else class="text-center py-12">
               <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-3xl p-8 max-w-md mx-auto">
-                <svg class="mx-auto h-16 w-16 text-purple-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                </svg>
                 <h3 class="text-lg font-semibold text-gray-900 mb-2">No videos yet</h3>
                 <p class="text-gray-600 mb-4">Upload your first videos to get started with your library</p>
                 <button
@@ -854,8 +861,591 @@
               </div>
             </div>
         </div>
+
+        <!-- News Tab -->
+        <div v-else-if="activeTab === 'news'" class="cms-content-section">
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">News Management</h3>
+              <p class="text-sm text-gray-600">Create and manage news articles</p>
+            </div>
+            <button
+              @click="showNewsForm = true"
+              class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl text-sm font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
+            >
+              Add News
+            </button>
+          </div>
+
+          <!-- News List -->
+          <div v-if="groupedNews.length > 0" class="space-y-6">
+            <div v-for="group in groupedNews" :key="group.slug" class="news-group">
+              <div class="news-group-header">
+                <div class="news-group-info">
+                  <h4 class="news-group-title">{{ group.title }}</h4>
+                  <p class="news-group-meta">
+                    <span class="news-date">{{ formatDate(group.date) }}</span>
+                    <span class="news-separator">•</span>
+                    <span class="news-source">{{ group.source || 'Monte Group' }}</span>
+                    <span class="news-separator">•</span>
+                    <span class="news-views">{{ group.views }} views</span>
+                  </p>
+                </div>
+                <div class="news-group-actions">
+                  <button
+                    @click="editNewsGroup(group)"
+                    class="btn-action btn-edit"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    @click="deleteNewsGroup(group.slug)"
+                    class="btn-action btn-delete"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <div class="news-translations">
+                <div v-for="translation in group.translations" :key="translation.id" class="news-translation">
+                  <div class="translation-header">
+                    <span class="translation-flag">{{ getLanguageFlag(translation.locale) }}</span>
+                    <span class="translation-language">{{ getLanguageName(translation.locale) }}</span>
+                    <span class="translation-status" :class="{ 'published': translation.published, 'draft': !translation.published }">
+                      {{ translation.published ? 'Published' : 'Draft' }}
+                    </span>
+                  </div>
+                  <div class="translation-content">
+                    <h5 class="translation-title">{{ translation.title }}</h5>
+                    <p class="translation-description">{{ translation.description }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else class="text-center py-12">
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-3xl p-8 max-w-md mx-auto">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">No news articles yet</h3>
+              <p class="text-gray-600 mb-4">Create your first news article to get started</p>
+              <button
+                @click="showNewsForm = true"
+                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
+              >
+                Create News Article
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Media Materials Tab -->
+        <div v-else-if="activeTab === 'media'" class="cms-content-section">
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Media Materials</h3>
+              <p class="text-sm text-gray-600">Manage videos, images, and PDFs for media materials page</p>
+            </div>
+            <button
+              @click="showMediaForm = true"
+              class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl text-sm font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-green-500/25"
+            >
+              Add Media
+            </button>
+          </div>
+
+          <!-- Media Type Filter -->
+          <div class="flex space-x-2">
+            <button
+              @click="mediaFilter = 'all'"
+              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'all' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+            >
+              All
+            </button>
+            <button
+              @click="mediaFilter = 'video'"
+              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'video' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+            >
+              Videos
+            </button>
+            <button
+              @click="mediaFilter = 'image'"
+              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'image' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+            >
+              Images
+            </button>
+            <button
+              @click="mediaFilter = 'pdf'"
+              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'pdf' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
+            >
+              PDFs
+            </button>
+          </div>
+
+          <!-- Media Grid -->
+          <div v-if="groupedMedia.length > 0" class="space-y-6">
+            <div v-for="group in groupedMedia" :key="group.key" class="media-group-card">
+              <div class="media-group-header">
+                <div class="media-group-info">
+                  <h4 class="media-group-title">{{ group.mainTitle }}</h4>
+                  <p class="media-group-meta">
+                    <span class="media-type">{{ group.type.toUpperCase() }}</span>
+                    <span class="media-separator">•</span>
+                    <span class="media-date">{{ formatDate(group.createdAt) }}</span>
+                    <span class="media-separator">•</span>
+                    <span class="media-count">{{ group.translations.length }} language(s)</span>
+                  </p>
+                </div>
+                <div class="media-group-actions">
+                  <button
+                    @click="editMediaGroup(group)"
+                    class="btn-action btn-edit"
+                  >
+                    Edit All
+                  </button>
+                  <button
+                    @click="deleteMediaGroup(group.key)"
+                    class="btn-action btn-delete"
+                  >
+                    Delete All
+                  </button>
+                </div>
+              </div>
+
+              <div class="media-translations">
+                <div v-for="translation in group.translations" :key="translation.id" class="media-translation">
+                  <div class="media-preview">
+                    <video v-if="translation.type === 'video'" :src="translation.path" class="media-thumbnail" preload="metadata"></video>
+                    <img v-else-if="translation.type === 'image'" :src="translation.path" class="media-thumbnail" :alt="translation.title">
+                    <div v-else class="media-thumbnail media-pdf">
+                      <span class="pdf-icon">📄</span>
+                      <span class="pdf-label">PDF</span>
+                    </div>
+                  </div>
+
+                  <div class="media-info">
+                    <div class="media-header">
+                      <span class="media-flag">{{ getLanguageFlag(translation.locale) }}</span>
+                      <span class="media-language">{{ getLanguageName(translation.locale) }}</span>
+                      <span class="media-status" :class="{ 'published': translation.published, 'draft': !translation.published }">
+                        {{ translation.published ? 'Published' : 'Draft' }}
+                      </span>
+                    </div>
+
+                    <div class="media-content">
+                      <h5 class="media-title">{{ translation.title }}</h5>
+                      <p class="media-description">{{ translation.description }}</p>
+                      <div class="media-actions">
+                        <button @click="editSingleMedia(translation)" class="btn-mini btn-edit">Edit</button>
+                        <button @click="deleteMedia(translation.id)" class="btn-mini btn-delete">Delete</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div v-else class="text-center py-12">
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-3xl p-8 max-w-md mx-auto">
+              <h3 class="text-lg font-semibold text-gray-900 mb-2">No media materials yet</h3>
+              <p class="text-gray-600 mb-4">Upload your first media materials to get started</p>
+              <button
+                @click="showMediaForm = true"
+                class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-green-500/25"
+              >
+                Upload Media
+              </button>
+            </div>
+          </div>
+        </div>
     </main>
   </div>
+
+  <!-- News Form Modal -->
+  <Transition name="modal">
+    <div v-if="showNewsForm" class="modal-overlay" @click="showNewsForm = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Add News Article</h3>
+          <button @click="showNewsForm = false" class="modal-close">
+            ×
+          </button>
+        </div>
+
+        <form @submit.prevent="submitNewsForm" class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeLanguage = lang.code"
+              :class="['language-tab', { 'active': activeLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- English Fields -->
+          <div v-show="activeLanguage === 'en'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (English) *</label>
+              <input
+                v-model="newsForm.translations.en.title"
+                type="text"
+                required
+                class="form-input"
+                placeholder="Enter English title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (English) *</label>
+              <textarea
+                v-model="newsForm.translations.en.description"
+                required
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (English)</label>
+              <textarea
+                v-model="newsForm.translations.en.content"
+                rows="6"
+                class="form-textarea"
+                placeholder="Enter English content (HTML supported)"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Mongolian Fields -->
+          <div v-show="activeLanguage === 'mn'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Mongolian)</label>
+              <input
+                v-model="newsForm.translations.mn.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Mongolian title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Mongolian)</label>
+              <textarea
+                v-model="newsForm.translations.mn.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (Mongolian)</label>
+              <textarea
+                v-model="newsForm.translations.mn.content"
+                rows="6"
+                class="form-textarea"
+                placeholder="Enter Mongolian content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Chinese Fields -->
+          <div v-show="activeLanguage === 'ch'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Chinese)</label>
+              <input
+                v-model="newsForm.translations.ch.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Chinese title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Chinese)</label>
+              <textarea
+                v-model="newsForm.translations.ch.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (Chinese)</label>
+              <textarea
+                v-model="newsForm.translations.ch.content"
+                rows="6"
+                class="form-textarea"
+                placeholder="Enter Chinese content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common Fields -->
+          <div class="form-group">
+            <label class="form-label">Source</label>
+            <input
+              v-model="newsForm.source"
+              type="text"
+              class="form-input"
+              placeholder="News source (e.g., Monte Group Press Release)"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Featured Image</label>
+            <input
+              ref="newsImageInput"
+              type="file"
+              accept="image/*"
+              @change="handleNewsImageUpload"
+              class="form-file"
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input
+                v-model="newsForm.published"
+                type="checkbox"
+                class="form-checkbox-input"
+              >
+              <span class="form-checkbox-label">Publish immediately</span>
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              @click="showNewsForm = false"
+              class="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              :disabled="newsFormLoading"
+              class="btn btn-primary"
+            >
+              {{ newsFormLoading ? 'Creating...' : 'Create News' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Media Form Modal -->
+  <Transition name="modal">
+    <div v-if="showMediaForm" class="modal-overlay" @click="showMediaForm = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Add Media Material</h3>
+          <button @click="showMediaForm = false" class="modal-close">
+            ×
+          </button>
+        </div>
+
+        <form @submit.prevent="submitMediaForm" class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeMediaLanguage = lang.code"
+              :class="['language-tab', { 'active': activeMediaLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- English Fields -->
+          <div v-show="activeMediaLanguage === 'en'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (English) *</label>
+              <input
+                v-model="mediaForm.translations.en.title"
+                type="text"
+                required
+                class="form-input"
+                placeholder="Enter English title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (English)</label>
+              <textarea
+                v-model="mediaForm.translations.en.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English description"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Mongolian Fields -->
+          <div v-show="activeMediaLanguage === 'mn'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Mongolian)</label>
+              <input
+                v-model="mediaForm.translations.mn.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Mongolian title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Mongolian)</label>
+              <textarea
+                v-model="mediaForm.translations.mn.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian description"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Chinese Fields -->
+          <div v-show="activeMediaLanguage === 'ch'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Chinese)</label>
+              <input
+                v-model="mediaForm.translations.ch.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Chinese title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Chinese)</label>
+              <textarea
+                v-model="mediaForm.translations.ch.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese description"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Media File *</label>
+            <input
+              ref="mediaFileInput"
+              type="file"
+              accept="video/*,image/*,.pdf"
+              required
+              @change="handleMediaFileUpload"
+              class="form-file"
+            >
+            <p class="form-help">Supported: Videos (MP4, WebM), Images (JPG, PNG), PDFs</p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-checkbox">
+              <input
+                v-model="mediaForm.published"
+                type="checkbox"
+                class="form-checkbox-input"
+              >
+              <span class="form-checkbox-label">Publish immediately</span>
+            </label>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              type="button"
+              @click="showMediaForm = false"
+              class="btn btn-secondary"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              :disabled="mediaFormLoading"
+              class="btn btn-primary btn-success"
+            >
+              {{ mediaFormLoading ? 'Uploading...' : 'Upload Media' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- News Edit Modal -->
+  <Transition name="modal">
+    <div v-if="showNewsEditModal" class="modal-overlay" @click="showNewsEditModal = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Edit News Group</h3>
+          <button @click="showNewsEditModal = false" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-form">
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeLanguage = lang.code"
+              :class="['language-tab', { 'active': activeLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <div v-if="editingNewsGroup" v-for="lang in languages" :key="lang.code" v-show="activeLanguage === lang.code" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title ({{ lang.name }})</label>
+              <input
+                v-model="editingNewsGroup.translations[lang.code].title"
+                type="text"
+                class="form-input"
+                :placeholder="`Enter ${lang.name} title`"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description ({{ lang.name }})</label>
+              <textarea
+                v-model="editingNewsGroup.translations[lang.code].description"
+                rows="3"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} description`"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content ({{ lang.name }})</label>
+              <textarea
+                v-model="editingNewsGroup.translations[lang.code].content"
+                rows="6"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} content`"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button @click="showNewsEditModal = false" class="btn btn-secondary">Cancel</button>
+            <button @click="saveNewsGroup" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
 </template>
 
 <script setup>
@@ -867,6 +1457,47 @@ const translations = ref([])
 const loading = ref(false)
 const images = ref([])
 const videos = ref([])
+const newsItems = ref([])
+const mediaItems = ref([])
+const showNewsForm = ref(false)
+const showMediaForm = ref(false)
+const showNewsEditModal = ref(false)
+const editingNewsGroup = ref(null)
+const mediaFilter = ref('all')
+const newsFormLoading = ref(false)
+const mediaFormLoading = ref(false)
+const activeLanguage = ref('en')
+const activeMediaLanguage = ref('en')
+
+// Language configuration
+const languages = [
+  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: 'mn', name: 'Mongolian', flag: '🇲🇳' },
+  { code: 'ch', name: 'Chinese', flag: '🇨🇳' }
+]
+
+// Form data with translations
+const newsForm = ref({
+  translations: {
+    en: { title: '', description: '', content: '' },
+    mn: { title: '', description: '', content: '' },
+    ch: { title: '', description: '', content: '' }
+  },
+  source: '',
+  published: true
+})
+
+const mediaForm = ref({
+  translations: {
+    en: { title: '', description: '' },
+    mn: { title: '', description: '' },
+    ch: { title: '', description: '' }
+  },
+  published: true
+})
+
+const newsImageFile = ref(null)
+const mediaFile = ref(null)
 const selectedImage = ref(null)
 const selectedKey = ref(null) // For single row selection
 const showEditModal = ref(false) // Show edit modal
@@ -1000,6 +1631,64 @@ const filteredKeys = computed(() => {
   return uniqueKeys.value
 })
 
+// Filtered media items based on type
+const filteredMediaItems = computed(() => {
+  if (mediaFilter.value === 'all') {
+    return mediaItems.value
+  }
+  return mediaItems.value.filter(item => item.type === mediaFilter.value)
+})
+
+// Group news items by slug for multi-language display
+const groupedNews = computed(() => {
+  const groups = {}
+
+  newsItems.value.forEach(news => {
+    if (!groups[news.slug]) {
+      groups[news.slug] = {
+        slug: news.slug,
+        mainTitle: news.title,
+        date: news.date,
+        source: news.source,
+        totalViews: 0,
+        translations: []
+      }
+    }
+
+    groups[news.slug].translations.push(news)
+    groups[news.slug].totalViews += news.views || 0
+
+    // Use the first English title as main title, fallback to first available
+    if (news.locale === 'en' || !groups[news.slug].mainTitle) {
+      groups[news.slug].mainTitle = news.title
+    }
+  })
+
+  return Object.values(groups).sort((a, b) => new Date(b.date) - new Date(a.date))
+})
+
+// Group media items by original filename for multi-language display
+const groupedMedia = computed(() => {
+  const groups = {}
+
+  mediaItems.value.forEach(media => {
+    const baseKey = media.originalName || media.filename
+    if (!groups[baseKey]) {
+      groups[baseKey] = {
+        key: baseKey,
+        type: media.type,
+        mainTitle: media.title,
+        createdAt: media.createdAt,
+        translations: []
+      }
+    }
+
+    groups[baseKey].translations.push(media)
+  })
+
+  return Object.values(groups).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+})
+
 // Current folder images
 const currentFolderImages = computed(() => {
   return images.value.filter(img => img.folder === activeImageFolder.value)
@@ -1088,6 +1777,424 @@ function getLocaleName(locale) {
     'ch': 'Chinese'
   }
   return names[locale] || locale.toUpperCase()
+}
+
+// Helper functions for language display
+function getLanguageFlag(locale) {
+  const flags = {
+    'en': '🇺🇸',
+    'mn': '🇲🇳',
+    'ch': '🇨🇳'
+  }
+  return flags[locale] || '🌐'
+}
+
+function getLanguageName(locale) {
+  const names = {
+    'en': 'English',
+    'mn': 'Mongolian',
+    'ch': 'Chinese'
+  }
+  return names[locale] || locale.toUpperCase()
+}
+
+// News group management functions
+function editNewsGroup(group) {
+  console.log('Editing group:', group)
+  
+  // Handle both grouped and flat news structures
+  const translations = group.translations || []
+  
+  editingNewsGroup.value = {
+    slug: group.slug,
+    translations: {
+      en: translations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '', content: '' },
+      mn: translations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '', content: '' },
+      ch: translations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '', content: '' }
+    }
+  }
+  showNewsEditModal.value = true
+}
+
+async function saveNewsGroup() {
+  if (!editingNewsGroup.value) return
+  
+  try {
+    const promises = []
+    
+    for (const [locale, translation] of Object.entries(editingNewsGroup.value.translations)) {
+      if (translation.title && translation.title.trim()) {
+        const newsData = {
+          title: translation.title,
+          description: translation.description || translation.title,
+          content: translation.content || '',
+          locale: locale,
+          published: true
+        }
+        
+        if (translation.id) {
+          promises.push($fetch(`/api/news/${translation.id}`, {
+            method: 'PUT',
+            body: newsData
+          }))
+        } else {
+          const formData = new FormData()
+          formData.append('data', JSON.stringify(newsData))
+          
+          promises.push($fetch('/api/news', {
+            method: 'POST',
+            body: formData
+          }))
+        }
+      }
+    }
+    
+    if (promises.length > 0) {
+      await Promise.all(promises)
+      await loadNews()
+      showNewsEditModal.value = false
+      alert('News group updated successfully!')
+    } else {
+      alert('Please fill in at least one title')
+    }
+  } catch (error) {
+    console.error('Failed to save news group:', error)
+    alert('Failed to save news group')
+  }
+}
+
+function editSingleNews(news) {
+  // TODO: Implement single news editing modal
+  console.log('Edit single news:', news)
+}
+
+async function deleteNewsGroup(slug) {
+  if (!confirm('Are you sure you want to delete all translations of this news article?')) return
+
+  try {
+    // Find all news items with this slug and delete them
+    const newsToDelete = newsItems.value.filter(news => news.slug === slug)
+    const deletePromises = newsToDelete.map(news =>
+      $fetch(`/api/news/${news.id}`, { method: 'DELETE' })
+    )
+
+    await Promise.all(deletePromises)
+    await loadNews() // Reload news list
+
+    alert(`Deleted ${newsToDelete.length} news translations successfully!`)
+  } catch (error) {
+    console.error('Failed to delete news group:', error)
+    alert('Failed to delete news group')
+  }
+}
+
+// Media group management functions
+function editMediaGroup(group) {
+  // TODO: Implement group editing modal
+  console.log('Edit media group:', group)
+}
+
+function editSingleMedia(media) {
+  // TODO: Implement single media editing modal
+  console.log('Edit single media:', media)
+}
+
+async function deleteMediaGroup(key) {
+  if (!confirm('Are you sure you want to delete all translations of this media item?')) return
+
+  try {
+    // Find all media items with this key and delete them
+    const mediaToDelete = mediaItems.value.filter(media =>
+      (media.originalName || media.filename) === key
+    )
+    const deletePromises = mediaToDelete.map(media =>
+      $fetch(`/api/media-materials/${media.id}`, { method: 'DELETE' })
+    )
+
+    await Promise.all(deletePromises)
+    await loadMediaMaterials() // Reload media list
+
+    alert(`Deleted ${mediaToDelete.length} media translations successfully!`)
+  } catch (error) {
+    console.error('Failed to delete media group:', error)
+    alert('Failed to delete media group')
+  }
+}
+
+// News Management Functions
+async function loadNews() {
+  try {
+    // Use the new grouped endpoint - single API call for all languages
+    const response = await $fetch('/api/news/', {
+      params: {
+        pageSize: 100 // Load more items for admin
+      }
+    })
+
+    console.log('Grouped news API response xxxx:', response)
+
+    if (response && response.data && Array.isArray(response.data)) {
+      // Convert grouped data back to flat structure for compatibility
+      const allNews = []
+      // response.data.forEach(group => {
+      //   Object.values(group.translations).forEach(translation => {
+      //     allNews.push({
+      //       ...translation,
+      //       slug: group.slug,
+      //       date: group.date,
+      //       source: group.source
+      //     })
+      //   })
+      // })
+      response.data.forEach(newsItem => {
+        allNews.push(newsItem)
+      })
+
+      newsItems.value = allNews
+      console.log('Total loaded news items:', allNews.length)
+    } else {
+      newsItems.value = []
+    }
+  } catch (error) {
+    console.error('Failed to load news:', error)
+    newsItems.value = []
+  }
+}
+
+function editNews(news) {
+  // TODO: Implement news editing modal
+  console.log('Edit news:', news)
+}
+
+async function deleteNews(id) {
+  if (!confirm('Are you sure you want to delete this news article?')) return
+
+  try {
+    await $fetch(`/api/news/${id}`, { method: 'DELETE' })
+    await loadNews() // Reload news list
+  } catch (error) {
+    console.error('Failed to delete news:', error)
+    alert('Failed to delete news article')
+  }
+}
+
+// Media Management Functions
+async function loadMediaMaterials() {
+  try {
+    // Use the new grouped endpoint - single API call for all languages
+    const response = await $fetch('/api/media-materials/', {
+      params: {
+        published: false, // Load all including unpublished
+        pageSize: 100 // Load more items for admin
+      }
+    })
+
+    console.log('Grouped media API response,,,,,,xx:', response)
+
+    if (response && response.data && Array.isArray(response.data)) {
+      // Convert grouped data back to flat structure for compatibility
+      const allMedia = []
+      // response.data.forEach(group => {
+      //   Object.values(group.translations).forEach(translation => {
+      //     allMedia.push({
+      //       ...translation,
+      //       originalName: group.key
+      //     })
+      //   })
+      // })
+      response.data.forEach(mediaItem => {
+        allMedia.push(mediaItem)
+      })
+
+
+      mediaItems.value = allMedia
+      console.log('Total loaded media items:', allMedia.length)
+    } else {
+      mediaItems.value = []
+    }
+  } catch (error) {
+    console.error('Failed to load media materials:', error)
+    mediaItems.value = []
+  }
+}
+
+function editMedia(media) {
+  // TODO: Implement media editing modal
+  console.log('Edit media:', media)
+}
+
+async function deleteMedia(id) {
+  if (!confirm('Are you sure you want to delete this media item?')) return
+
+  try {
+    await $fetch(`/api/media-materials/${id}`, { method: 'DELETE' })
+    await loadMediaMaterials() // Reload media list
+  } catch (error) {
+    console.error('Failed to delete media item:', error)
+    alert('Failed to delete media item')
+  }
+}
+
+// Utility function for date formatting
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
+
+// Form handling functions
+function handleNewsImageUpload(event) {
+  const file = event.target.files[0]
+  if (file) {
+    newsImageFile.value = file
+  }
+}
+
+function handleMediaFileUpload(event) {
+  const file = event.target.files[0]
+  if (file) {
+    mediaFile.value = file
+  }
+}
+
+async function submitNewsForm() {
+  // Validate required English fields
+  if (!newsForm.value.translations.en.title || !newsForm.value.translations.en.description) {
+    alert('Please fill in required English fields (Title and Description)')
+    return
+  }
+
+  newsFormLoading.value = true
+
+  try {
+    // Create news articles for each language that has content
+    const promises = []
+
+    for (const lang of languages) {
+      const translation = newsForm.value.translations[lang.code]
+
+      // Only create if title exists for this language
+      if (translation.title && translation.title.trim()) {
+        const formData = new FormData()
+
+        const newsData = {
+          title: translation.title,
+          description: translation.description || translation.title,
+          content: translation.content || '',
+          source: newsForm.value.source || '',
+          locale: lang.code,
+          published: newsForm.value.published
+        }
+
+        formData.append('data', JSON.stringify(newsData))
+
+        if (newsImageFile.value) {
+          formData.append('image', newsImageFile.value)
+        }
+
+        promises.push($fetch('/api/news', {
+          method: 'POST',
+          body: formData
+        }))
+      }
+    }
+
+    const responses = await Promise.all(promises)
+
+    if (responses.every(r => r.success)) {
+      // Reset form
+      newsForm.value = {
+        translations: {
+          en: { title: '', description: '', content: '' },
+          mn: { title: '', description: '', content: '' },
+          ch: { title: '', description: '', content: '' }
+        },
+        source: '',
+        published: true
+      }
+      newsImageFile.value = null
+      showNewsForm.value = false
+      activeLanguage.value = 'en'
+
+      // Reload news list
+      await loadNews()
+
+      alert(`News articles created successfully for ${responses.length} language(s)!`)
+    }
+  } catch (error) {
+    console.error('Failed to create news:', error)
+    alert('Failed to create news articles')
+  } finally {
+    newsFormLoading.value = false
+  }
+}
+
+async function submitMediaForm() {
+  // Validate required fields
+  if (!mediaForm.value.translations.en.title || !mediaFile.value) {
+    alert('Please fill in required fields (English Title and Media File)')
+    return
+  }
+
+  mediaFormLoading.value = true
+
+  try {
+    // Create media materials for each language that has content
+    const promises = []
+
+    for (const lang of languages) {
+      const translation = mediaForm.value.translations[lang.code]
+
+      // Only create if title exists for this language
+      if (translation.title && translation.title.trim()) {
+        const formData = new FormData()
+
+        const mediaData = {
+          title: translation.title,
+          description: translation.description || '',
+          locale: lang.code,
+          published: mediaForm.value.published
+        }
+
+        formData.append('data', JSON.stringify(mediaData))
+        formData.append('file', mediaFile.value)
+
+        promises.push($fetch('/api/media-materials', {
+          method: 'POST',
+          body: formData
+        }))
+      }
+    }
+
+    const responses = await Promise.all(promises)
+
+    if (responses.every(r => r.success)) {
+      // Reset form
+      mediaForm.value = {
+        translations: {
+          en: { title: '', description: '' },
+          mn: { title: '', description: '' },
+          ch: { title: '', description: '' }
+        },
+        published: true
+      }
+      mediaFile.value = null
+      showMediaForm.value = false
+      activeMediaLanguage.value = 'en'
+
+      // Reload media list
+      await loadMediaMaterials()
+
+      alert(`Media materials uploaded successfully for ${responses.length} language(s)!`)
+    }
+  } catch (error) {
+    console.error('Failed to upload media:', error)
+    alert('Failed to upload media materials')
+  } finally {
+    mediaFormLoading.value = false
+  }
 }
 
 // Open edit modal for a key
@@ -1844,9 +2951,13 @@ async function handleVideoUpload(event) {
 }
 
 // Load data on component mount
-onMounted(() => {
-  loadImages()
-  loadVideos()
+onMounted(async () => {
+  console.log('Admin page mounted, loading data...')
+  await loadImages()
+  await loadVideos()
+  await loadNews()
+  await loadMediaMaterials()
+  console.log('Data loading complete')
 })
 </script>
 
@@ -3279,6 +4390,691 @@ button:active:not(:disabled) {
   .cms-locale-label {
     min-width: auto;
     padding-top: 0;
+  }
+}
+
+/* Beautiful Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modal-container {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem 2rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.modal-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  pointer-events: none;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+.modal-form {
+  padding: 2rem;
+  max-height: calc(90vh - 200px);
+  overflow-y: auto;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select,
+.form-file {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  background: #f9fafb;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus,
+.form-file:focus {
+  outline: none;
+  border-color: #667eea;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-file {
+  padding: 0.5rem;
+  background: white;
+  border-style: dashed;
+}
+
+.form-help {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.form-checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.form-checkbox-input {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-radius: 4px;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.form-checkbox-input:checked {
+  background: #667eea;
+  border-color: #667eea;
+}
+
+.form-checkbox-label {
+  font-size: 0.875rem;
+  color: #374151;
+  cursor: pointer;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 1.5rem;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 2px solid #e5e7eb;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Modal Animations */
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-from .modal-container,
+.modal-leave-to .modal-container {
+  transform: scale(0.9) translateY(-20px);
+}
+
+.modal-enter-to .modal-container,
+.modal-leave-from .modal-container {
+  transform: scale(1) translateY(0);
+}
+
+/* Language Tabs */
+.language-tabs {
+  display: flex;
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 1.5rem;
+  gap: 4px;
+}
+
+.language-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  color: #64748b;
+}
+
+.language-tab.active {
+  background: white;
+  color: #1e293b;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.language-tab:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.5);
+  color: #475569;
+}
+
+.language-section {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* News Group Cards */
+.news-group-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.news-group-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.news-group-header {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.news-group-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.news-group-meta {
+  font-size: 0.875rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.news-separator {
+  color: #cbd5e1;
+}
+
+.news-group-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.news-translations {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.news-translation {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+}
+
+.translation-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.translation-flag {
+  font-size: 1.25rem;
+}
+
+.translation-language {
+  font-weight: 600;
+  color: #374151;
+}
+
+.translation-status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.translation-status.published {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.translation-status.draft {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.translation-title {
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.translation-description {
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.translation-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Media Group Cards */
+.media-group-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.media-group-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.media-group-header {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.media-group-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.media-group-meta {
+  font-size: 0.875rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.media-separator {
+  color: #cbd5e1;
+}
+
+.media-group-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.media-translations {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.media-translation {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  gap: 1rem;
+}
+
+.media-preview {
+  flex-shrink: 0;
+  width: 120px;
+  height: 80px;
+}
+
+.media-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #f1f5f9;
+}
+
+.media-pdf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.pdf-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.pdf-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.media-info {
+  flex: 1;
+}
+
+.media-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.media-flag {
+  font-size: 1.25rem;
+}
+
+.media-language {
+  font-weight: 600;
+  color: #374151;
+}
+
+.media-status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: auto;
+}
+
+.media-status.published {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.media-status.draft {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.media-title {
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.media-description {
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin: 0 0 0.75rem 0;
+}
+
+.media-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Action Buttons */
+.btn-action {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-action.btn-edit {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.btn-action.btn-edit:hover {
+  background: #bfdbfe;
+  transform: translateY(-1px);
+}
+
+.btn-action.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-action.btn-delete:hover {
+  background: #fecaca;
+  transform: translateY(-1px);
+}
+
+.btn-mini {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-mini.btn-edit {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.btn-mini.btn-edit:hover {
+  background: #bfdbfe;
+}
+
+.btn-mini.btn-delete {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-mini.btn-delete:hover {
+  background: #fecaca;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .modal-container {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+    border-radius: 16px;
+  }
+
+  .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+
+  .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .modal-form {
+    padding: 1.5rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .language-tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+
+  .news-group-header,
+  .media-group-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .news-group-actions,
+  .media-group-actions {
+    justify-content: flex-end;
+  }
+
+  .media-translation {
+    flex-direction: column;
+  }
+
+  .media-preview {
+    width: 100%;
+    height: 120px;
   }
 }
 </style>

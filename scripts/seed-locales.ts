@@ -28,3 +28,4 @@ async function seedLocales(locale: string, path: string): Promise<void> {
 await seedLocales('en', 'locales/en.json');
 await seedLocales('mn', 'locales/mn.json');
 await seedLocales('ch', 'locales/ch.json');
+

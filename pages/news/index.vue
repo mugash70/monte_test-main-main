@@ -29,24 +29,116 @@
     <script setup lang="ts">
     import HeroBanner from '@/components/ui/HeroBanner.vue'
     import CardItem from '@/components/ui/CardItemNews.vue'
-    import { ref, computed } from 'vue'
-    import { useNews } from '@/composables/useNews'
+    import { ref, computed, onMounted, watch } from 'vue'
     import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
-    const { cards } = useNews()
-    
+
+    const { t, locale } = useI18n();
+
+    interface NewsItem {
+      id: number
+      slug: string
+      title: string
+      description: string
+      content?: string
+      image?: string
+      date: string
+      source?: string
+      views: number
+      published: boolean
+      locale: string
+      files?: Array<{
+        id: number
+        filename: string
+        originalName: string
+        path: string
+        size: number
+        mimeType: string
+      }>
+    }
+
+    const newsItems = ref<NewsItem[]>([])
+    const loading = ref(false)
     const currentPage = ref(1)
     const itemsPerPage = 6
-    
-    const totalPages = computed(() => Math.ceil(cards.value.length / itemsPerPage))
+    const totalItems = ref(0)
+
+    // Load news from API
+    async function loadNews() {
+      loading.value = true
+      try {
+        const response = await $fetch<{
+          success: boolean
+          data: NewsItem[]
+          pagination: {
+            page: number
+            pageSize: number
+            total: number
+            totalPages: number
+          }
+        }>('/api/news', {
+          params: {
+            page: currentPage.value,
+            pageSize: itemsPerPage,
+            locale: locale.value,
+            published: true
+          }
+        })
+
+        if (response && response.data) {
+          newsItems.value = response.data
+          totalItems.value = response.pagination.total
+        }
+      } catch (error) {
+        console.error('Failed to load news:', error)
+      } finally {
+        loading.value = false
+      }
+    }
+
+    const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage))
+
+    const goToPage = async (page: number) => {
+      currentPage.value = page
+      await loadNews()
+    }
+
+    const nextPage = async () => {
+      if (currentPage.value < totalPages.value) {
+        currentPage.value++
+        await loadNews()
+      }
+    }
+
+    const prevPage = async () => {
+      if (currentPage.value > 1) {
+        currentPage.value--
+        await loadNews()
+      }
+    }
+
+    // Convert API data to match CardItem component format
     const paginatedCards = computed(() => {
-      const start = (currentPage.value - 1) * itemsPerPage
-      return cards.value.slice(start, start + itemsPerPage)
+      return newsItems.value.map((news: NewsItem) => ({
+        slug: news.slug,
+        image: news.image || '/media/news-placeholder.png',
+        date: news.date,
+        descriptionKey: news.description, // Use description directly instead of translation key
+        source: news.source || 'Monte Group',
+        views: news.views,
+        content: news.content,
+        files: news.files || []
+      }))
     })
-    
-    const goToPage = (page: number) => currentPage.value = page
-    const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++ }
-    const prevPage = () => { if (currentPage.value > 1) currentPage.value-- }
+
+    onMounted(() => {
+      loadNews()
+    })
+
+    // Watch locale changes
+    watch(locale, () => {
+      currentPage.value = 1
+      loadNews()
+    })
     </script>
     
     

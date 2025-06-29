@@ -95,42 +95,99 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, computed } from 'vue'
+import { ref, nextTick, computed, onMounted, watch } from 'vue'
 import HeroBanner from '@/components/ui/HeroBanner.vue'
 import CardItem from '@/components/ui/CardDownloads.vue'
-import { useData } from '@/composables/useData'
 import { useI18n } from 'vue-i18n';
 
 const { t, locale } = useI18n();
 const isMongolian = computed(() => locale.value === 'mn');
 
-const { data } = useData()
-
     const currentPage = ref(1)
     const itemsPerPage = 6
 
-    const totalPages = computed(() => Math.ceil(data.value.length / itemsPerPage))
+    const totalPages = computed(() => Math.ceil(images.value.length / itemsPerPage))
     const paginatedCards = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage
-      return data.value.slice(start, start + itemsPerPage)
+      return images.value.slice(start, start + itemsPerPage)
     })
 
     const goToPage = (page: number) => currentPage.value = page
     const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++ }
     const prevPage = () => { if (currentPage.value > 1) currentPage.value-- }
 
-const videos = [
-  {
-    titleKey: 'media.video.title1',
-    src: '/media/media1.mp4',
-    poster: '/media/media1l.png',
-  },
-  {
-    titleKey: 'media.video.title2',
-    src: '/media/media2.mp4',
-    poster: '/media/media2l.png',
-  },
-]
+interface VideoItem {
+  titleKey: string
+  src: string
+  poster: string
+  title: string
+  description?: string
+}
+
+interface ImageItem {
+  image: string
+  descriptionKey: string
+  title: string
+  description?: string
+  downloadUrl: string
+}
+
+interface MediaMaterial {
+  id: number
+  title: string
+  description?: string
+  type: string
+  path: string
+  thumbnailPath?: string
+  size: number
+  mimeType: string
+  duration?: number
+  dimensions?: string
+}
+
+const videos = ref<VideoItem[]>([])
+const images = ref<ImageItem[]>([])
+
+// Load media materials from API
+async function loadMediaMaterials() {
+  try {
+    const response = await $fetch<{
+      success: boolean
+      data: MediaMaterial[]
+      pagination: any
+    }>('/api/media-materials', {
+      params: {
+        locale: locale.value,
+        published: true
+      }
+    })
+
+    if (response && response.data) {
+      // Separate videos and images
+      videos.value = response.data
+        .filter((item: MediaMaterial) => item.type === 'video')
+        .map((video: MediaMaterial) => ({
+          titleKey: video.title, // Use title directly
+          src: video.path,
+          poster: video.thumbnailPath || video.path,
+          title: video.title,
+          description: video.description
+        }))
+
+      images.value = response.data
+        .filter((item: MediaMaterial) => item.type === 'image')
+        .map((image: MediaMaterial) => ({
+          image: image.path,
+          descriptionKey: image.title, // Use title as description key
+          title: image.title,
+          description: image.description,
+          downloadUrl: image.path
+        }))
+    }
+  } catch (error) {
+    console.error('Failed to load media materials:', error)
+  }
+}
 
 const activeTab = ref<'video' | 'picture'>('video')
 const videoPlayer = ref<HTMLVideoElement | null>(null)
@@ -169,6 +226,15 @@ const downloadVideo = (src: string) => {
   link.click()
   document.body.removeChild(link)
 }
+
+// Load data on mount and when locale changes
+onMounted(() => {
+  loadMediaMaterials()
+})
+
+watch(locale, () => {
+  loadMediaMaterials()
+})
 </script>
 
 <style scoped>
