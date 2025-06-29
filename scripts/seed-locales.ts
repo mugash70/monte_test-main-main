@@ -1,5 +1,5 @@
 // scripts/seed-locales.ts
-import { PrismaClient } from '../generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import fs from 'fs/promises';
 const prisma = new PrismaClient();
 
