@@ -2,7 +2,7 @@
     <template>
       <div>
         <HeroBanner :title="t('logistics.title')" image="/hero/logistics.jpg" />
-        <br/> <br/><br/>
+        <div class="responsive-spacing"></div>
         <section class="tech-intro">
           <div class="tech-content">
             <p :class="{ 'vertical-head': isMongolian }">{{ t('logistics.intro') }}</p>
@@ -231,6 +231,23 @@ const isMongolian = computed(() => locale.value === 'mn');
   
   .section-title {
     font-size: 32px;
+  }
+}
+
+/* Responsive spacing */
+.responsive-spacing {
+  margin-top: 5rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-spacing {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-spacing {
+    margin-top: 1.5rem;
   }
 }
     </style>

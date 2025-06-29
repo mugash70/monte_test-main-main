@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeroBanner :title="t('collaborativeProjects.title')" image="/hero/collaborative.jpg" />
-    <br/> <br/><br/>
+    <div class="responsive-spacing"></div>
     <section class="projects-intro">
       <p :class="{ 'vertical-intro': isMongolian }">{{ t('collaborativeProjects.intro') }}</p>
     </section>
@@ -535,6 +535,22 @@ onMounted(() => {
 
   .grid-row.full-width .background-image p {
     font-size: clamp(0.625rem, 2.5vw, 0.75rem);
+  }
+}
+
+.responsive-spacing {
+  margin-top: 5rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-spacing {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-spacing {
+    margin-top: 1.5rem;
   }
 }
 </style>

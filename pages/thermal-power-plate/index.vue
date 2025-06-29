@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeroBanner :title="t('thermalPower.title')" image="/hero/thermal.jpg" />
-    <br/> <br/><br/>
+    <div class="responsive-spacing"></div>
     <section class="tech-intro">
       <div class="tech-content" :class="{ 'vertical-text': isMongolian }">
         <p>{{ t('thermalPower.intro.paragraph1') }}</p>
@@ -485,6 +485,23 @@ const itemsWithKeys = ref([
 }
 .section-therm.vertical-text {
   max-height: 150px;
+}
+
+/* Responsive spacing */
+.responsive-spacing {
+  margin-top: 5rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-spacing {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-spacing {
+    margin-top: 1.5rem;
+  }
 }
 
 </style>

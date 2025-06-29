@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeroBanner :title="t('aluminiumIndustry.title')" image="/hero/aluminium.jpg" />
-    <br/> <br/><br/>
+    <div class="responsive-spacing"></div>
     <section class="tech-intro">
       <div class="tech-content" :class="{ 'vertical-text': isMongolian }">
         <p>{{ t('aluminiumIndustry.intro') }}</p>
@@ -282,6 +282,23 @@ onMounted(() => {
 
   .tech-intro .vertical-text {
     max-height: clamp(60px, 25vh, 100px);
+  }
+}
+
+/* Responsive spacing */
+.responsive-spacing {
+  margin-top: 5rem;
+}
+
+@media (max-width: 768px) {
+  .responsive-spacing {
+    margin-top: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .responsive-spacing {
+    margin-top: 1.5rem;
   }
 }
 </style>
