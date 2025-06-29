@@ -1,7 +1,7 @@
 <template>
   <div>
     <HeroBanner :title="t('aluminiumIndustry.title')" image="/hero/aluminium.jpg" />
-
+    <br/> <br/><br/>
     <section class="tech-intro">
       <div class="tech-content" :class="{ 'vertical-text': isMongolian }">
         <p>{{ t('aluminiumIndustry.intro') }}</p>

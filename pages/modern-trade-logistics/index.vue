@@ -2,6 +2,7 @@
     <template>
       <div>
         <HeroBanner :title="t('logistics.title')" image="/hero/logistics.jpg" />
+        <br/> <br/><br/>
         <section class="tech-intro">
           <div class="tech-content">
             <p :class="{ 'vertical-head': isMongolian }">{{ t('logistics.intro') }}</p>

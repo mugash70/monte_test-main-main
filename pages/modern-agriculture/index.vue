@@ -1,9 +1,10 @@
 <template>
   <div>
     <HeroBanner :title="t('husbandry.title')" image="/hero/husbandry.jpg" />
-
+  <br/> <br/><br/>
     <section class="tech-intro">
       <div class="tech-content">
+
         <p  :class="{ 'vertical-head': isMongolian }">{{ t('husbandry.intro.paragraph1') }}</p>
         <p  :class="{ 'vertical-head': isMongolian }">{{ t('husbandry.intro.paragraph2') }}</p>
       </div>

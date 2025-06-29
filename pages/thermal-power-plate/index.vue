@@ -1,6 +1,7 @@
 <template>
   <div>
     <HeroBanner :title="t('thermalPower.title')" image="/hero/thermal.jpg" />
+    <br/> <br/><br/>
     <section class="tech-intro">
       <div class="tech-content" :class="{ 'vertical-text': isMongolian }">
         <p>{{ t('thermalPower.intro.paragraph1') }}</p>
