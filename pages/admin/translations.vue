@@ -10,24 +10,8 @@
             Content Management Studio
           </h1>
           <p class="cms-description">
-            Manage translations, images, and videos with live preview and advanced editing tools
+            Manage static contexts, images, and videos with live preview and advanced editing tools
           </p>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="cms-stats">
-          <div class="cms-stat-item">
-            <span class="cms-stat-number">{{ totalItems || 0 }}</span>
-            <span class="cms-stat-label">Translations</span>
-          </div>
-          <div class="cms-stat-item">
-            <span class="cms-stat-number">{{ images.length || 0 }}</span>
-            <span class="cms-stat-label">Images</span>
-          </div>
-          <div class="cms-stat-item">
-            <span class="cms-stat-number">{{ videos.length || 0 }}</span>
-            <span class="cms-stat-label">Videos</span>
-          </div>
         </div>
       </div>
     </header>
@@ -583,7 +567,22 @@
           <div v-if="showEditModal" class="cms-modal-overlay" @click="closeEditModal">
             <div class="cms-modal" @click.stop>
               <div class="cms-modal-header">
-                <h3 class="cms-modal-title">Edit Translation: {{ selectedKey }}</h3>
+                <div class="modal-header-content">
+                  <h3 class="cms-modal-title">Edit Translation: {{ selectedKey }}</h3>
+                  <div class="auto-translate-controls">
+                    <label class="auto-translate-toggle">
+                      <input
+                        type="checkbox"
+                        v-model="autoTranslateEnabled"
+                        class="toggle-checkbox"
+                      >
+                      <span class="toggle-label">Auto-translate</span>
+                    </label>
+                    <span v-if="isAutoTranslating" class="auto-translate-indicator">
+                      🔄 Translating...
+                    </span>
+                  </div>
+                </div>
                 <button @click="closeEditModal" class="cms-modal-close">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -601,12 +600,24 @@
                     <span v-else class="cms-translation-new">NEW</span>
                   </div>
                   <div class="cms-modal-input">
-                    <textarea
-                      v-model="editingTranslations.en.value"
-                      class="cms-modal-textarea"
-                      placeholder="Enter English translation..."
-                      rows="4"
-                    ></textarea>
+                    <div class="input-with-translate">
+                      <textarea
+                        v-model="editingTranslations.en.value"
+                        class="cms-modal-textarea"
+                        placeholder="Enter English translation..."
+                        rows="4"
+                        @blur="autoTranslateStaticText('en')"
+                      ></textarea>
+                      <button
+                        type="button"
+                        @click="autoTranslateStaticText('en')"
+                        class="translate-btn translate-btn-textarea"
+                        :disabled="isAutoTranslating"
+                        title="Auto-translate to other languages"
+                      >
+                        {{ isAutoTranslating ? '🔄' : '🌐' }}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -619,12 +630,24 @@
                     <span v-else class="cms-translation-new">NEW</span>
                   </div>
                   <div class="cms-modal-input">
-                    <textarea
-                      v-model="editingTranslations.mn.value"
-                      class="cms-modal-textarea"
-                      placeholder="Enter Mongolian translation..."
-                      rows="4"
-                    ></textarea>
+                    <div class="input-with-translate">
+                      <textarea
+                        v-model="editingTranslations.mn.value"
+                        class="cms-modal-textarea"
+                        placeholder="Enter Mongolian translation..."
+                        rows="4"
+                        @blur="autoTranslateStaticText('mn')"
+                      ></textarea>
+                      <button
+                        type="button"
+                        @click="autoTranslateStaticText('mn')"
+                        class="translate-btn translate-btn-textarea"
+                        :disabled="isAutoTranslating"
+                        title="Auto-translate to other languages"
+                      >
+                        {{ isAutoTranslating ? '🔄' : '🌐' }}
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -637,12 +660,24 @@
                     <span v-else class="cms-translation-new">NEW</span>
                   </div>
                   <div class="cms-modal-input">
-                    <textarea
-                      v-model="editingTranslations.ch.value"
-                      class="cms-modal-textarea"
-                      placeholder="Enter Chinese translation..."
-                      rows="4"
-                    ></textarea>
+                    <div class="input-with-translate">
+                      <textarea
+                        v-model="editingTranslations.ch.value"
+                        class="cms-modal-textarea"
+                        placeholder="Enter Chinese translation..."
+                        rows="4"
+                        @blur="autoTranslateStaticText('ch')"
+                      ></textarea>
+                      <button
+                        type="button"
+                        @click="autoTranslateStaticText('ch')"
+                        class="translate-btn translate-btn-textarea"
+                        :disabled="isAutoTranslating"
+                        title="Auto-translate to other languages"
+                      >
+                        {{ isAutoTranslating ? '🔄' : '🌐' }}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -949,39 +984,13 @@
             </div>
             <button
               @click="showMediaForm = true"
-              class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl text-sm font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-green-500/25"
+              class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500  rounded-xl text-sm font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-green-500/25"
             >
               Add Media
             </button>
           </div>
 
-          <!-- Media Type Filter -->
-          <div class="flex space-x-2">
-            <button
-              @click="mediaFilter = 'all'"
-              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'all' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
-            >
-              All
-            </button>
-            <button
-              @click="mediaFilter = 'video'"
-              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'video' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
-            >
-              Videos
-            </button>
-            <button
-              @click="mediaFilter = 'image'"
-              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'image' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
-            >
-              Images
-            </button>
-            <button
-              @click="mediaFilter = 'pdf'"
-              :class="['px-4 py-2 rounded-lg text-sm font-medium transition-colors', mediaFilter === 'pdf' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200']"
-            >
-              PDFs
-            </button>
-          </div>
+        
 
           <!-- Media Grid -->
           <div v-if="groupedMedia.length > 0" class="space-y-6">
@@ -997,20 +1006,7 @@
                     <span class="media-count">{{ group.translations.length }} language(s)</span>
                   </p>
                 </div>
-                <div class="media-group-actions">
-                  <button
-                    @click="editMediaGroup(group)"
-                    class="btn-action btn-edit"
-                  >
-                    Edit All
-                  </button>
-                  <button
-                    @click="deleteMediaGroup(group.key)"
-                    class="btn-action btn-delete"
-                  >
-                    Delete All
-                  </button>
-                </div>
+
               </div>
 
               <div class="media-translations">
@@ -1069,7 +1065,22 @@
     <div v-if="showNewsForm" class="modal-overlay" @click="showNewsForm = false">
       <div class="modal-container" @click.stop>
         <div class="modal-header">
-          <h3 class="modal-title">Add News Article</h3>
+          <div class="modal-header-content">
+            <h3 class="modal-title">Add News Article</h3>
+            <div class="auto-translate-controls">
+              <label class="auto-translate-toggle">
+                <input
+                  type="checkbox"
+                  v-model="autoTranslateEnabled"
+                  class="toggle-checkbox"
+                >
+                <span class="toggle-label">Auto-translate</span>
+              </label>
+              <span v-if="isAutoTranslating" class="auto-translate-indicator">
+                🔄 Translating...
+              </span>
+            </div>
+          </div>
           <button @click="showNewsForm = false" class="modal-close">
             ×
           </button>
@@ -1093,24 +1104,48 @@
           <div v-show="activeLanguage === 'en'" class="language-section">
             <div class="form-group">
               <label class="form-label">Title (English) *</label>
-              <input
-                v-model="newsForm.translations.en.title"
-                type="text"
-                required
-                class="form-input"
-                placeholder="Enter English title"
-              >
+              <div class="input-with-translate">
+                <input
+                  v-model="newsForm.translations.en.title"
+                  type="text"
+                  required
+                  class="form-input"
+                  placeholder="Enter English title"
+                  @blur="autoTranslateNews('en', 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateNews('en', 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Description (English) *</label>
-              <textarea
-                v-model="newsForm.translations.en.description"
-                required
-                rows="3"
-                class="form-textarea"
-                placeholder="Enter English description"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="newsForm.translations.en.description"
+                  required
+                  rows="3"
+                  class="form-textarea"
+                  placeholder="Enter English description"
+                  @blur="autoTranslateNews('en', 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateNews('en', 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
@@ -1128,22 +1163,46 @@
           <div v-show="activeLanguage === 'mn'" class="language-section">
             <div class="form-group">
               <label class="form-label">Title (Mongolian)</label>
-              <input
-                v-model="newsForm.translations.mn.title"
-                type="text"
-                class="form-input"
-                placeholder="Enter Mongolian title"
-              >
+              <div class="input-with-translate">
+                <input
+                  v-model="newsForm.translations.mn.title"
+                  type="text"
+                  class="form-input"
+                  placeholder="Enter Mongolian title"
+                  @blur="autoTranslateNews('mn', 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateNews('mn', 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Description (Mongolian)</label>
-              <textarea
-                v-model="newsForm.translations.mn.description"
-                rows="3"
-                class="form-textarea"
-                placeholder="Enter Mongolian description"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="newsForm.translations.mn.description"
+                  rows="3"
+                  class="form-textarea"
+                  placeholder="Enter Mongolian description"
+                  @blur="autoTranslateNews('mn', 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateNews('mn', 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
@@ -1161,22 +1220,46 @@
           <div v-show="activeLanguage === 'ch'" class="language-section">
             <div class="form-group">
               <label class="form-label">Title (Chinese)</label>
-              <input
-                v-model="newsForm.translations.ch.title"
-                type="text"
-                class="form-input"
-                placeholder="Enter Chinese title"
-              >
+              <div class="input-with-translate">
+                <input
+                  v-model="newsForm.translations.ch.title"
+                  type="text"
+                  class="form-input"
+                  placeholder="Enter Chinese title"
+                  @blur="autoTranslateNews('ch', 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateNews('ch', 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Description (Chinese)</label>
-              <textarea
-                v-model="newsForm.translations.ch.description"
-                rows="3"
-                class="form-textarea"
-                placeholder="Enter Chinese description"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="newsForm.translations.ch.description"
+                  rows="3"
+                  class="form-textarea"
+                  placeholder="Enter Chinese description"
+                  @blur="autoTranslateNews('ch', 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateNews('ch', 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
@@ -1249,7 +1332,22 @@
     <div v-if="showMediaForm" class="modal-overlay" @click="showMediaForm = false">
       <div class="modal-container" @click.stop>
         <div class="modal-header">
-          <h3 class="modal-title">Add Media Material</h3>
+          <div class="modal-header-content">
+            <h3 class="modal-title">Add Media Material</h3>
+            <div class="auto-translate-controls">
+              <label class="auto-translate-toggle">
+                <input
+                  type="checkbox"
+                  v-model="autoTranslateEnabled"
+                  class="toggle-checkbox"
+                >
+                <span class="toggle-label">Auto-translate</span>
+              </label>
+              <span v-if="isAutoTranslating" class="auto-translate-indicator">
+                🔄 Translating...
+              </span>
+            </div>
+          </div>
           <button @click="showMediaForm = false" class="modal-close">
             ×
           </button>
@@ -1273,23 +1371,47 @@
           <div v-show="activeMediaLanguage === 'en'" class="language-section">
             <div class="form-group">
               <label class="form-label">Title (English) *</label>
-              <input
-                v-model="mediaForm.translations.en.title"
-                type="text"
-                required
-                class="form-input"
-                placeholder="Enter English title"
-              >
+              <div class="input-with-translate">
+                <input
+                  v-model="mediaForm.translations.en.title"
+                  type="text"
+                  required
+                  class="form-input"
+                  placeholder="Enter English title"
+                  @blur="autoTranslateMedia('en', 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateMedia('en', 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Description (English)</label>
-              <textarea
-                v-model="mediaForm.translations.en.description"
-                rows="3"
-                class="form-textarea"
-                placeholder="Enter English description"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="mediaForm.translations.en.description"
+                  rows="3"
+                  class="form-textarea"
+                  placeholder="Enter English description"
+                  @blur="autoTranslateMedia('en', 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateMedia('en', 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1297,22 +1419,46 @@
           <div v-show="activeMediaLanguage === 'mn'" class="language-section">
             <div class="form-group">
               <label class="form-label">Title (Mongolian)</label>
-              <input
-                v-model="mediaForm.translations.mn.title"
-                type="text"
-                class="form-input"
-                placeholder="Enter Mongolian title"
-              >
+              <div class="input-with-translate">
+                <input
+                  v-model="mediaForm.translations.mn.title"
+                  type="text"
+                  class="form-input"
+                  placeholder="Enter Mongolian title"
+                  @blur="autoTranslateMedia('mn', 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateMedia('mn', 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Description (Mongolian)</label>
-              <textarea
-                v-model="mediaForm.translations.mn.description"
-                rows="3"
-                class="form-textarea"
-                placeholder="Enter Mongolian description"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="mediaForm.translations.mn.description"
+                  rows="3"
+                  class="form-textarea"
+                  placeholder="Enter Mongolian description"
+                  @blur="autoTranslateMedia('mn', 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateMedia('mn', 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1320,22 +1466,46 @@
           <div v-show="activeMediaLanguage === 'ch'" class="language-section">
             <div class="form-group">
               <label class="form-label">Title (Chinese)</label>
-              <input
-                v-model="mediaForm.translations.ch.title"
-                type="text"
-                class="form-input"
-                placeholder="Enter Chinese title"
-              >
+              <div class="input-with-translate">
+                <input
+                  v-model="mediaForm.translations.ch.title"
+                  type="text"
+                  class="form-input"
+                  placeholder="Enter Chinese title"
+                  @blur="autoTranslateMedia('ch', 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateMedia('ch', 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Description (Chinese)</label>
-              <textarea
-                v-model="mediaForm.translations.ch.description"
-                rows="3"
-                class="form-textarea"
-                placeholder="Enter Chinese description"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="mediaForm.translations.ch.description"
+                  rows="3"
+                  class="form-textarea"
+                  placeholder="Enter Chinese description"
+                  @blur="autoTranslateMedia('ch', 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateMedia('ch', 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1389,7 +1559,22 @@
     <div v-if="showNewsEditModal" class="modal-overlay" @click="showNewsEditModal = false">
       <div class="modal-container" @click.stop>
         <div class="modal-header">
-          <h3 class="modal-title">Edit News Group</h3>
+          <div class="modal-header-content">
+            <h3 class="modal-title">Edit News Group</h3>
+            <div class="auto-translate-controls">
+              <label class="auto-translate-toggle">
+                <input
+                  type="checkbox"
+                  v-model="autoTranslateEnabled"
+                  class="toggle-checkbox"
+                >
+                <span class="toggle-label">Auto-translate</span>
+              </label>
+              <span v-if="isAutoTranslating" class="auto-translate-indicator">
+                🔄 Translating...
+              </span>
+            </div>
+          </div>
           <button @click="showNewsEditModal = false" class="modal-close">×</button>
         </div>
 
@@ -1409,38 +1594,175 @@
           <div v-if="editingNewsGroup" v-for="lang in languages" :key="lang.code" v-show="activeLanguage === lang.code" class="language-section">
             <div class="form-group">
               <label class="form-label">Title ({{ lang.name }})</label>
-              <input
-                v-model="editingNewsGroup.translations[lang.code].title"
-                type="text"
-                class="form-input"
-                :placeholder="`Enter ${lang.name} title`"
-              >
+              <div class="input-with-translate">
+                <input
+                  v-model="editingNewsGroup.translations[lang.code].title"
+                  type="text"
+                  class="form-input"
+                  :placeholder="`Enter ${lang.name} title`"
+                  @blur="autoTranslateEditNews(lang.code, 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateEditNews(lang.code, 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Description ({{ lang.name }})</label>
-              <textarea
-                v-model="editingNewsGroup.translations[lang.code].description"
-                rows="3"
-                class="form-textarea"
-                :placeholder="`Enter ${lang.name} description`"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="editingNewsGroup.translations[lang.code].description"
+                  rows="3"
+                  class="form-textarea"
+                  :placeholder="`Enter ${lang.name} description`"
+                  @blur="autoTranslateEditNews(lang.code, 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateEditNews(lang.code, 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
 
             <div class="form-group">
               <label class="form-label">Content ({{ lang.name }})</label>
-              <textarea
-                v-model="editingNewsGroup.translations[lang.code].content"
-                rows="6"
-                class="form-textarea"
-                :placeholder="`Enter ${lang.name} content`"
-              ></textarea>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="editingNewsGroup.translations[lang.code].content"
+                  rows="6"
+                  class="form-textarea"
+                  :placeholder="`Enter ${lang.name} content`"
+                  @blur="autoTranslateEditNews(lang.code, 'content')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateEditNews(lang.code, 'content')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
             </div>
           </div>
 
           <div class="modal-actions">
             <button @click="showNewsEditModal = false" class="btn btn-secondary">Cancel</button>
             <button @click="saveNewsGroup" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Media Edit Modal -->
+  <Transition name="modal">
+    <div v-if="showMediaEditModal" class="modal-overlay" @click="showMediaEditModal = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <div class="modal-header-content">
+            <h3 class="modal-title">Edit Media Group</h3>
+            <div class="auto-translate-controls">
+              <label class="auto-translate-toggle">
+                <input
+                  type="checkbox"
+                  v-model="autoTranslateEnabled"
+                  class="toggle-checkbox"
+                >
+                <span class="toggle-label">Auto-translate</span>
+              </label>
+              <span v-if="isAutoTranslating" class="auto-translate-indicator">
+                🔄 Translating...
+              </span>
+            </div>
+          </div>
+          <button @click="showMediaEditModal = false" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-form">
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeEditMediaLanguage = lang.code"
+              :class="['language-tab', { 'active': activeEditMediaLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <div v-if="editingMediaGroup" v-for="lang in languages" :key="lang.code" v-show="activeEditMediaLanguage === lang.code" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title ({{ lang.name }})</label>
+              <div class="input-with-translate">
+                <input
+                  v-model="editingMediaGroup.translations[lang.code].title"
+                  type="text"
+                  class="form-input"
+                  :placeholder="`Enter ${lang.name} title`"
+                  @blur="autoTranslateEditMedia(lang.code, 'title')"
+                >
+                <button
+                  type="button"
+                  @click="autoTranslateEditMedia(lang.code, 'title')"
+                  class="translate-btn"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description ({{ lang.name }})</label>
+              <div class="input-with-translate">
+                <textarea
+                  v-model="editingMediaGroup.translations[lang.code].description"
+                  rows="3"
+                  class="form-textarea"
+                  :placeholder="`Enter ${lang.name} description`"
+                  @blur="autoTranslateEditMedia(lang.code, 'description')"
+                ></textarea>
+                <button
+                  type="button"
+                  @click="autoTranslateEditMedia(lang.code, 'description')"
+                  class="translate-btn translate-btn-textarea"
+                  :disabled="isAutoTranslating"
+                  title="Auto-translate to other languages"
+                >
+                  {{ isAutoTranslating ? '🔄' : '🌐' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Media Info</label>
+            <div class="media-info-display">
+              <p><strong>Type:</strong> {{ editingMediaGroup?.type?.toUpperCase() }}</p>
+              <p><strong>Filename:</strong> {{ editingMediaGroup?.filename }}</p>
+              <p><strong>Path:</strong> {{ editingMediaGroup?.path }}</p>
+            </div>
+          </div>
+
+          <div class="modal-actions">
+            <button @click="showMediaEditModal = false" class="btn btn-secondary">Cancel</button>
+            <button @click="saveMediaGroup" class="btn btn-primary btn-success">Save Changes</button>
           </div>
         </div>
       </div>
@@ -1462,12 +1784,21 @@ const mediaItems = ref([])
 const showNewsForm = ref(false)
 const showMediaForm = ref(false)
 const showNewsEditModal = ref(false)
+const showMediaEditModal = ref(false)
 const editingNewsGroup = ref(null)
+const editingMediaGroup = ref(null)
 const mediaFilter = ref('all')
 const newsFormLoading = ref(false)
 const mediaFormLoading = ref(false)
 const activeLanguage = ref('en')
 const activeMediaLanguage = ref('en')
+const activeEditLanguage = ref('en')
+const activeEditMediaLanguage = ref('en')
+
+// Auto-translation functionality
+const { autoTranslate, smartTranslate, detectLanguage } = useTranslationEngine()
+const isAutoTranslating = ref(false)
+const autoTranslateEnabled = ref(true)
 
 // Language configuration
 const languages = [
@@ -1828,6 +2159,7 @@ async function saveNewsGroup() {
           title: translation.title,
           description: translation.description || translation.title,
           content: translation.content || '',
+          slug: editingNewsGroup.value.slug,
           locale: locale,
           published: true
         }
@@ -1864,8 +2196,21 @@ async function saveNewsGroup() {
 }
 
 function editSingleNews(news) {
-  // TODO: Implement single news editing modal
-  console.log('Edit single news:', news)
+  // Find all news items with the same slug
+  const relatedNews = newsItems.value.filter(item => item.slug === news.slug)
+
+  // Create editing structure
+  editingNewsGroup.value = {
+    slug: news.slug,
+    translations: {
+      en: relatedNews.find(n => n.locale === 'en') || { locale: 'en', title: '', description: '', content: '' },
+      mn: relatedNews.find(n => n.locale === 'mn') || { locale: 'mn', title: '', description: '', content: '' },
+      ch: relatedNews.find(n => n.locale === 'ch') || { locale: 'ch', title: '', description: '', content: '' }
+    }
+  }
+
+  activeEditLanguage.value = 'en'
+  showNewsEditModal.value = true
 }
 
 async function deleteNewsGroup(slug) {
@@ -1890,13 +2235,95 @@ async function deleteNewsGroup(slug) {
 
 // Media group management functions
 function editMediaGroup(group) {
-  // TODO: Implement group editing modal
-  console.log('Edit media group:', group)
+  editingMediaGroup.value = {
+    key: group.key,
+    type: group.type,
+    filename: group.filename,
+    path: group.path,
+    translations: {
+      en: group.translations.en || { locale: 'en', title: '', description: '' },
+      mn: group.translations.mn || { locale: 'mn', title: '', description: '' },
+      ch: group.translations.ch || { locale: 'ch', title: '', description: '' }
+    }
+  }
+
+  activeEditMediaLanguage.value = 'en'
+  showMediaEditModal.value = true
 }
 
 function editSingleMedia(media) {
-  // TODO: Implement single media editing modal
-  console.log('Edit single media:', media)
+  // Find all media items with the same originalName or filename
+  const groupKey = media.originalName || media.filename
+  const relatedMedia = mediaItems.value.filter(item =>
+    (item.originalName || item.filename) === groupKey
+  )
+
+  // Create editing structure
+  editingMediaGroup.value = {
+    key: groupKey,
+    type: media.type,
+    filename: media.filename,
+    path: media.path,
+    translations: {
+      en: relatedMedia.find(m => m.locale === 'en') || { locale: 'en', title: '', description: '' },
+      mn: relatedMedia.find(m => m.locale === 'mn') || { locale: 'mn', title: '', description: '' },
+      ch: relatedMedia.find(m => m.locale === 'ch') || { locale: 'ch', title: '', description: '' }
+    }
+  }
+
+  activeEditMediaLanguage.value = 'en'
+  showMediaEditModal.value = true
+}
+
+async function saveMediaGroup() {
+  if (!editingMediaGroup.value) return
+
+  try {
+    const promises = []
+
+    // Update or create media items for each language that has a title
+    for (const [locale, translation] of Object.entries(editingMediaGroup.value.translations)) {
+      if (translation.title && translation.title.trim()) {
+        if (translation.id) {
+          // Update existing media item
+          promises.push($fetch(`/api/media-materials/${translation.id}`, {
+            method: 'PUT',
+            body: {
+              title: translation.title,
+              description: translation.description || ''
+            }
+          }))
+        } else {
+          // Create new media item (this shouldn't happen in edit mode, but just in case)
+          promises.push($fetch('/api/media-materials', {
+            method: 'POST',
+            body: {
+              title: translation.title,
+              description: translation.description || '',
+              type: editingMediaGroup.value.type,
+              filename: editingMediaGroup.value.filename,
+              originalName: editingMediaGroup.value.key,
+              path: editingMediaGroup.value.path,
+              locale: locale,
+              published: true
+            }
+          }))
+        }
+      }
+    }
+
+    if (promises.length > 0) {
+      await Promise.all(promises)
+      await loadMediaMaterials()
+      showMediaEditModal.value = false
+      alert('Media group updated successfully!')
+    } else {
+      alert('Please fill in at least one title')
+    }
+  } catch (error) {
+    console.error('Failed to save media group:', error)
+    alert('Failed to save media group')
+  }
 }
 
 async function deleteMediaGroup(key) {
@@ -1924,37 +2351,31 @@ async function deleteMediaGroup(key) {
 // News Management Functions
 async function loadNews() {
   try {
-    // Use the new grouped endpoint - single API call for all languages
-    const response = await $fetch('/api/news/', {
-      params: {
-        pageSize: 100 // Load more items for admin
+    // Fetch all locales like static text translations
+    const promises = languages.map(lang =>
+      $fetch('/api/news', {
+        params: {
+          locale: lang.code,
+          published: false, // Load all including unpublished
+          pageSize: 100
+        }
+      })
+    )
+
+    const responses = await Promise.all(promises)
+    console.log('News API responses for all locales:', responses)
+
+    // Combine all language results
+    const allNews = []
+    responses.forEach((response, index) => {
+      if (response && response.data && Array.isArray(response.data)) {
+        console.log(`Adding ${response.data.length} news items for ${languages[index].code}`)
+        allNews.push(...response.data)
       }
     })
 
-    console.log('Grouped news API response xxxx:', response)
-
-    if (response && response.data && Array.isArray(response.data)) {
-      // Convert grouped data back to flat structure for compatibility
-      const allNews = []
-      // response.data.forEach(group => {
-      //   Object.values(group.translations).forEach(translation => {
-      //     allNews.push({
-      //       ...translation,
-      //       slug: group.slug,
-      //       date: group.date,
-      //       source: group.source
-      //     })
-      //   })
-      // })
-      response.data.forEach(newsItem => {
-        allNews.push(newsItem)
-      })
-
-      newsItems.value = allNews
-      console.log('Total loaded news items:', allNews.length)
-    } else {
-      newsItems.value = []
-    }
+    newsItems.value = allNews
+    console.log('Total loaded news items:', allNews.length)
   } catch (error) {
     console.error('Failed to load news:', error)
     newsItems.value = []
@@ -1981,37 +2402,31 @@ async function deleteNews(id) {
 // Media Management Functions
 async function loadMediaMaterials() {
   try {
-    // Use the new grouped endpoint - single API call for all languages
-    const response = await $fetch('/api/media-materials/', {
-      params: {
-        published: false, // Load all including unpublished
-        pageSize: 100 // Load more items for admin
+    // Fetch all locales like static text translations
+    const promises = languages.map(lang =>
+      $fetch('/api/media-materials', {
+        params: {
+          locale: lang.code,
+          published: false, // Load all including unpublished
+          pageSize: 100
+        }
+      })
+    )
+
+    const responses = await Promise.all(promises)
+    console.log('Media API responses for all locales:', responses)
+
+    // Combine all language results
+    const allMedia = []
+    responses.forEach((response, index) => {
+      if (response && response.data && Array.isArray(response.data)) {
+        console.log(`Adding ${response.data.length} media items for ${languages[index].code}`)
+        allMedia.push(...response.data)
       }
     })
 
-    console.log('Grouped media API response,,,,,,xx:', response)
-
-    if (response && response.data && Array.isArray(response.data)) {
-      // Convert grouped data back to flat structure for compatibility
-      const allMedia = []
-      // response.data.forEach(group => {
-      //   Object.values(group.translations).forEach(translation => {
-      //     allMedia.push({
-      //       ...translation,
-      //       originalName: group.key
-      //     })
-      //   })
-      // })
-      response.data.forEach(mediaItem => {
-        allMedia.push(mediaItem)
-      })
-
-
-      mediaItems.value = allMedia
-      console.log('Total loaded media items:', allMedia.length)
-    } else {
-      mediaItems.value = []
-    }
+    mediaItems.value = allMedia
+    console.log('Total loaded media items:', allMedia.length)
   } catch (error) {
     console.error('Failed to load media materials:', error)
     mediaItems.value = []
@@ -2042,6 +2457,103 @@ function formatDate(dateString) {
     month: 'short',
     day: 'numeric'
   })
+}
+
+// Auto-translation functions
+async function autoFillTranslations(sourceText, sourceLang, targetObject, fieldName) {
+  if (!sourceText || !sourceText.trim() || !autoTranslateEnabled.value) return
+
+  isAutoTranslating.value = true
+
+  try {
+    const translations = await autoTranslate(sourceText, sourceLang, ['en', 'mn', 'ch'])
+
+    // Fill in the translations for other languages
+    for (const [lang, translatedText] of Object.entries(translations)) {
+      if (lang !== sourceLang && translatedText && targetObject[lang]) {
+        // Only auto-fill if the field is empty or user confirms
+        if (!targetObject[lang][fieldName] || targetObject[lang][fieldName].trim() === '') {
+          targetObject[lang][fieldName] = translatedText
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Auto-translation failed:', error)
+  } finally {
+    isAutoTranslating.value = false
+  }
+}
+
+// Auto-translate for news forms
+async function autoTranslateNews(sourceLang, fieldName) {
+  const sourceText = newsForm.value.translations[sourceLang][fieldName]
+  await autoFillTranslations(sourceText, sourceLang, newsForm.value.translations, fieldName)
+}
+
+// Auto-translate for media forms
+async function autoTranslateMedia(sourceLang, fieldName) {
+  const sourceText = mediaForm.value.translations[sourceLang][fieldName]
+  await autoFillTranslations(sourceText, sourceLang, mediaForm.value.translations, fieldName)
+}
+
+// Auto-translate for editing news
+async function autoTranslateEditNews(sourceLang, fieldName) {
+  if (!editingNewsGroup.value) return
+  const sourceText = editingNewsGroup.value.translations[sourceLang][fieldName]
+  await autoFillTranslations(sourceText, sourceLang, editingNewsGroup.value.translations, fieldName)
+}
+
+// Auto-translate for editing media
+async function autoTranslateEditMedia(sourceLang, fieldName) {
+  if (!editingMediaGroup.value) return
+  const sourceText = editingMediaGroup.value.translations[sourceLang][fieldName]
+  await autoFillTranslations(sourceText, sourceLang, editingMediaGroup.value.translations, fieldName)
+}
+
+// Auto-translate for static text translations
+async function autoTranslateStatic(translation, fieldName) {
+  if (!translation.value || !translation.value.trim()) return
+
+  const sourceLang = detectLanguage(translation.value)
+  const translations = await autoTranslate(translation.value, sourceLang, ['en', 'mn', 'ch'])
+
+  // Find related translations with the same key
+  const relatedTranslations = filteredTranslations.value.filter(t => t.key === translation.key)
+
+  for (const [lang, translatedText] of Object.entries(translations)) {
+    if (lang !== sourceLang && translatedText) {
+      const existingTranslation = relatedTranslations.find(t => t.locale === lang)
+      if (existingTranslation && (!existingTranslation.value || existingTranslation.value.trim() === '')) {
+        existingTranslation.value = translatedText
+      }
+    }
+  }
+}
+
+// Auto-translate for static text in edit modal
+async function autoTranslateStaticText(sourceLang) {
+  if (!editingTranslations.value[sourceLang]?.value || !autoTranslateEnabled.value) return
+
+  isAutoTranslating.value = true
+
+  try {
+    const sourceText = editingTranslations.value[sourceLang].value
+    const translations = await autoTranslate(sourceText, sourceLang, ['en', 'mn', 'ch'])
+
+    // Fill in the translations for other languages
+    for (const [lang, translatedText] of Object.entries(translations)) {
+      if (lang !== sourceLang && translatedText && editingTranslations.value[lang]) {
+        // Only auto-fill if the field is empty
+        if (!editingTranslations.value[lang].value || editingTranslations.value[lang].value.trim() === '') {
+          editingTranslations.value[lang].value = translatedText
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Auto-translation failed:', error)
+  } finally {
+    isAutoTranslating.value = false
+  }
 }
 
 // Form handling functions
@@ -4426,8 +4938,48 @@ button:active:not(:disabled) {
   padding: 2rem 2rem 1.5rem;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
+}
+
+.modal-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.auto-translate-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.auto-translate-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.toggle-checkbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  cursor: pointer;
+}
+
+.toggle-checkbox:checked {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+.toggle-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
 }
 
 .modal-header::before {
@@ -5021,6 +5573,93 @@ button:active:not(:disabled) {
 
 .btn-mini.btn-delete:hover {
   background: #fecaca;
+}
+
+/* Media Info Display */
+.media-info-display {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.875rem;
+}
+
+.media-info-display p {
+  margin: 0.25rem 0;
+  color: #64748b;
+}
+
+.media-info-display strong {
+  color: #374151;
+  font-weight: 600;
+}
+
+/* Auto-Translation Styles */
+.input-with-translate {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.input-with-translate .form-input,
+.input-with-translate .form-textarea {
+  flex: 1;
+}
+
+.translate-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+}
+
+.translate-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.translate-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: spin 1s linear infinite;
+}
+
+.translate-btn-textarea {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Auto-translate indicator */
+.auto-translate-indicator {
+  background: #dcfce7;
+  color: #166534;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* Responsive Design */
