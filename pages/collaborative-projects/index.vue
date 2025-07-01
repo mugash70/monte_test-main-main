@@ -117,11 +117,63 @@
 
 <script setup lang="ts">
 import HeroBanner from '@/components/ui/HeroBanner.vue'
-import { onMounted, onBeforeUnmount, computed } from 'vue';
+import { onMounted, onBeforeUnmount, computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
 
-const { locale } = useI18n();
+interface CollaborativeProject {
+  id: number;
+  title: string;
+  description: string | null;
+  content?: any;
+  image: string | null;
+  type: string;
+  locale: string;
+  slug: string;
+  published: boolean;
+  address: string | null;
+  contactName: string | null;
+  contactEmail: string | null;
+  contactPhone: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const { t, locale } = useI18n();
+
+const collaborativeProjects = ref<any[]>([])
+const loading = ref(false)
+
+// Load data from API
+const loadCollaborativeProjectsData = async () => {
+  loading.value = true;
+  try {
+    const response = await $fetch('/api/collaborative-projects', {
+      query: {
+        locale: locale.value,
+        published: true
+      }
+    });
+
+    if (response.success) {
+      collaborativeProjects.value = response.data as any[];
+    }
+  } catch (error) {
+    console.error('Failed to load collaborative projects data:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Watch for locale changes
+watch(locale, () => {
+  loadCollaborativeProjectsData();
+});
+
+// Load data on mount
+onMounted(() => {
+  loadCollaborativeProjectsData();
+});
+
 const isMongolian = computed(() => locale.value === 'mn');
 
 onMounted(() => {

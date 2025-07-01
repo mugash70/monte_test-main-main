@@ -78,3 +78,91 @@ model MediaMaterial {
   @@index([locale])
   @@index([published])
 }
+
+model JoinUs {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  description String?
+  content     String?
+  type        String   // 'social', 'campus', 'staff-style'
+  category    String?  // job category for recruitment
+  location    String?  // job location
+  salary      String?  // salary range
+  contact     String?  // contact person
+  contactNumber String? // contact phone
+  requirements String? // job requirements (JSON string)
+  responsibilities String? // job responsibilities (JSON string)
+  image       String?
+  published   Boolean  @default(true)
+  locale      String   @default("en")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([locale])
+  @@index([published])
+  @@index([slug])
+}
+
+model PartyBuilding {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  description String?
+  content     String?  // JSON string for paragraphs
+  mainImage   String?
+  contentImages String? // JSON array of image paths
+  date        DateTime @default(now())
+  source      String?
+  views       Int      @default(0)
+  published   Boolean  @default(true)
+  locale      String   @default("en")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([slug])
+  @@index([locale])
+  @@index([published])
+  @@index([date])
+}
+
+model DevelopmentHistory {
+  id          Int      @id @default(autoincrement())
+  year        Int
+  title       String
+  description String
+  achievements String? // JSON array of achievement items
+  published   Boolean  @default(true)
+  locale      String   @default("en")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([year])
+  @@index([locale])
+  @@index([published])
+  @@unique([year, locale], name: "year_locale")
+}
+
+model CollaborativeProject {
+  id          Int      @id @default(autoincrement())
+  slug        String   @unique
+  title       String
+  description String?
+  content     String?
+  type        String   // 'new-materials', 'new-energy', 'fly-ash', 'cooperation'
+  image       String?
+  contactEmail String?
+  contactPhone String?
+  contactName String?
+  address     String?
+  published   Boolean  @default(true)
+  locale      String   @default("en")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([locale])
+  @@index([published])
+  @@index([slug])
+}

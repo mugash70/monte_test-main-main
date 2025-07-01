@@ -67,6 +67,46 @@
         <span>Static Videos</span>
         <span class="cms-nav-badge">{{ videos.length || 0 }}</span>
       </button>
+
+      <button
+        @click="activeTab = 'join-us'"
+        :class="['cms-nav-tab', { 'cms-nav-tab-active': activeTab === 'join-us' }]"
+        role="tab"
+        :aria-selected="activeTab === 'join-us'"
+      >
+        <span>Join Us</span>
+        <span class="cms-nav-badge">{{ joinUsItems.length || 0 }}</span>
+      </button>
+
+      <button
+        @click="activeTab = 'party-building'"
+        :class="['cms-nav-tab', { 'cms-nav-tab-active': activeTab === 'party-building' }]"
+        role="tab"
+        :aria-selected="activeTab === 'party-building'"
+      >
+        <span>Party Building</span>
+        <span class="cms-nav-badge">{{ partyBuildingItems.length || 0 }}</span>
+      </button>
+
+      <button
+        @click="activeTab = 'development-history'"
+        :class="['cms-nav-tab', { 'cms-nav-tab-active': activeTab === 'development-history' }]"
+        role="tab"
+        :aria-selected="activeTab === 'development-history'"
+      >
+        <span>Development History</span>
+        <span class="cms-nav-badge">{{ developmentHistoryItems.length || 0 }}</span>
+      </button>
+
+      <button
+        @click="activeTab = 'collaborative-projects'"
+        :class="['cms-nav-tab', { 'cms-nav-tab-active': activeTab === 'collaborative-projects' }]"
+        role="tab"
+        :aria-selected="activeTab === 'collaborative-projects'"
+      >
+        <span>Collaborative Projects</span>
+        <span class="cms-nav-badge">{{ collaborativeProjectsItems.length || 0 }}</span>
+      </button>
     </nav>
 
     <!-- Main Content -->
@@ -569,19 +609,6 @@
               <div class="cms-modal-header">
                 <div class="modal-header-content">
                   <h3 class="cms-modal-title">Edit Translation: {{ selectedKey }}</h3>
-                  <div class="auto-translate-controls">
-                    <label class="auto-translate-toggle">
-                      <input
-                        type="checkbox"
-                        v-model="autoTranslateEnabled"
-                        class="toggle-checkbox"
-                      >
-                      <span class="toggle-label">Auto-translate</span>
-                    </label>
-                    <span v-if="isAutoTranslating" class="auto-translate-indicator">
-                      🔄 Translating...
-                    </span>
-                  </div>
                 </div>
                 <button @click="closeEditModal" class="cms-modal-close">
                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -600,24 +627,12 @@
                     <span v-else class="cms-translation-new">NEW</span>
                   </div>
                   <div class="cms-modal-input">
-                    <div class="input-with-translate">
-                      <textarea
-                        v-model="editingTranslations.en.value"
-                        class="cms-modal-textarea"
-                        placeholder="Enter English translation..."
-                        rows="4"
-                        @blur="autoTranslateStaticText('en')"
-                      ></textarea>
-                      <button
-                        type="button"
-                        @click="autoTranslateStaticText('en')"
-                        class="translate-btn translate-btn-textarea"
-                        :disabled="isAutoTranslating"
-                        title="Auto-translate to other languages"
-                      >
-                        {{ isAutoTranslating ? '🔄' : '🌐' }}
-                      </button>
-                    </div>
+                    <textarea
+                      v-model="editingTranslations.en.value"
+                      class="cms-modal-textarea"
+                      placeholder="Enter English translation..."
+                      rows="4"
+                    ></textarea>
                   </div>
                 </div>
 
@@ -630,24 +645,12 @@
                     <span v-else class="cms-translation-new">NEW</span>
                   </div>
                   <div class="cms-modal-input">
-                    <div class="input-with-translate">
-                      <textarea
-                        v-model="editingTranslations.mn.value"
-                        class="cms-modal-textarea"
-                        placeholder="Enter Mongolian translation..."
-                        rows="4"
-                        @blur="autoTranslateStaticText('mn')"
-                      ></textarea>
-                      <button
-                        type="button"
-                        @click="autoTranslateStaticText('mn')"
-                        class="translate-btn translate-btn-textarea"
-                        :disabled="isAutoTranslating"
-                        title="Auto-translate to other languages"
-                      >
-                        {{ isAutoTranslating ? '🔄' : '🌐' }}
-                      </button>
-                    </div>
+                    <textarea
+                      v-model="editingTranslations.mn.value"
+                      class="cms-modal-textarea"
+                      placeholder="Enter Mongolian translation..."
+                      rows="4"
+                    ></textarea>
                   </div>
                 </div>
 
@@ -660,24 +663,12 @@
                     <span v-else class="cms-translation-new">NEW</span>
                   </div>
                   <div class="cms-modal-input">
-                    <div class="input-with-translate">
-                      <textarea
-                        v-model="editingTranslations.ch.value"
-                        class="cms-modal-textarea"
-                        placeholder="Enter Chinese translation..."
-                        rows="4"
-                        @blur="autoTranslateStaticText('ch')"
-                      ></textarea>
-                      <button
-                        type="button"
-                        @click="autoTranslateStaticText('ch')"
-                        class="translate-btn translate-btn-textarea"
-                        :disabled="isAutoTranslating"
-                        title="Auto-translate to other languages"
-                      >
-                        {{ isAutoTranslating ? '🔄' : '🌐' }}
-                      </button>
-                    </div>
+                    <textarea
+                      v-model="editingTranslations.ch.value"
+                      class="cms-modal-textarea"
+                      placeholder="Enter Chinese translation..."
+                      rows="4"
+                    ></textarea>
                   </div>
                 </div>
               </div>
@@ -759,27 +750,15 @@
 
                       <!-- Compact Action Buttons -->
                       <div class="space-y-1">
-                        <button
-                          @click="previewImage(image)"
-                          class="w-full px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700 transition-colors"
-                        >
-                          Preview
-                        </button>
-                        <button
-                          @click="openImageInfo(image)"
-                          class="w-full px-2 py-1 bg-blue-600 text-black text-xs rounded hover:bg-blue-700 transition-colors"
-                        >
-                          Info
-                        </button>
                         <input
-                          :ref="`imageInput-${image.name}`"
+                          :id="`imageInput-${image.name.replace(/[^a-zA-Z0-9]/g, '_')}`"
                           type="file"
                           accept="image/*"
-                          @change="(e) => smartReplaceImage(image, e)"
-                          class="hidden"
-                        >
+                          @change="(event) => smartReplaceImage(image, event)"
+                          style="display: none;"
+                        />
                         <button
-                          @click="$refs[`imageInput-${image.name}`][0]?.click()"
+                          @click="document.getElementById(`imageInput-${image.name.replace(/[^a-zA-Z0-9]/g, '_')}`)?.click()"
                           class="w-full px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
                         >
                           Update
@@ -851,27 +830,15 @@
 
         <!-- Tiny Buttons -->
         <div class="mt-1 space-y-0.5">
-          <button
-            @click="previewVideo(video)"
-            class="w-full bg-gray-600 text-white rounded text-[10px] py-[2px] hover:bg-gray-700"
-          >
-            Preview
-          </button>
-          <button
-            @click="openVideoInfo(video)"
-            class="w-full bg-purple-600 text-white rounded text-[10px] py-[2px] hover:bg-purple-700"
-          >
-            Info
-          </button>
           <input
-            :ref="`videoInput-${video.name}`"
+            :id="`videoInput-${video.name.replace(/[^a-zA-Z0-9]/g, '_')}`"
             type="file"
             accept="video/*"
-            @change="(e) => smartReplaceVideo(video, e)"
-            class="hidden"
-          >
+            @change="(event) => smartReplaceVideo(video, event)"
+            style="display: none;"
+          />
           <button
-            @click="$refs[`videoInput-${video.name}`][0]?.click()"
+            @click="document.getElementById(`videoInput-${video.name.replace(/[^a-zA-Z0-9]/g, '_')}`)?.click()"
             class="w-full bg-green-600 text-white rounded text-[10px] py-[2px] hover:bg-green-700"
           >
             Update
@@ -967,7 +934,7 @@
               <p class="text-gray-600 mb-4">Create your first news article to get started</p>
               <button
                 @click="showNewsForm = true"
-                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
+                class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
               >
                 Create News Article
               </button>
@@ -1050,10 +1017,356 @@
               <p class="text-gray-600 mb-4">Upload your first media materials to get started</p>
               <button
                 @click="showMediaForm = true"
-                class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-green-500/25"
+                class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 texwhite rounded-xl font-medium hover:from-green-600 hover:to-emerald-600 transition-all duration-200 shadow-lg shadow-green-500/25"
               >
                 Upload Media
               </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Join Us Tab -->
+        <div v-else-if="activeTab === 'join-us'" class="cms-content-section">
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Join Us Management</h3>
+              <p class="text-sm text-gray-600">Manage recruitment, social, campus, and staff style content</p>
+            </div>
+            <button
+              @click="showJoinUsForm = true"
+              class="px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
+            >
+              Add New Item
+            </button>
+          </div>
+
+          <!-- Join Us Content -->
+          <div v-if="joinUsItems.length === 0" class="text-center py-12">
+            <div class="text-gray-400 mb-4">
+              <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Join Us Items</h3>
+            <p class="text-gray-600 mb-4">Create your first recruitment or staff content to get started</p>
+            <button
+              @click="showJoinUsForm = true"
+              class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 shadow-lg shadow-blue-500/25"
+            >
+              Add Join Us Item
+            </button>
+          </div>
+
+          <!-- Join Us Items Table -->
+          <div v-else class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr v-for="item in joinUsItems" :key="item.id" class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">{{ item.title }}</div>
+                      <div class="text-sm text-gray-500">{{ item.description }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            :class="{
+                              'bg-blue-100 text-blue-800': item.type === 'campus',
+                              'bg-green-100 text-green-800': item.type === 'social',
+                              'bg-purple-100 text-purple-800': item.type === 'staff-style'
+                            }">
+                        {{ item.type }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {{ item.category || '-' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {{ item.location || '-' }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <button
+                        @click="toggleJoinUsStatus(item.id, item.published)"
+                        :class="[
+                          'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+                          item.published
+                            ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                            : 'bg-red-100 text-red-800 hover:bg-red-200'
+                        ]"
+                      >
+                        {{ item.published ? 'Published' : 'Draft' }}
+                      </button>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div class="flex space-x-2">
+                        <button
+                          @click="editJoinUsItem(item)"
+                          class="text-indigo-600 hover:text-indigo-900"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          @click="deleteJoinUsItem(item.id)"
+                          class="text-red-600 hover:text-red-900"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Party Building Tab -->
+        <div v-else-if="activeTab === 'party-building'" class="cms-content-section">
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Party Building Management</h3>
+              <p class="text-sm text-gray-600">Manage party building articles and content</p>
+            </div>
+            <button
+              @click="showPartyBuildingForm = true"
+              class="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500  rounded-lg font-medium hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg shadow-red-500/25"
+            >
+              Add New Article
+            </button>
+          </div>
+
+          <!-- Party Building Content -->
+          <div v-if="partyBuildingItems.length === 0" class="text-center py-12">
+            <div class="text-gray-400 mb-4">
+              <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Party Building Articles</h3>
+            <p class="text-gray-600 mb-4">Create your first party building article to get started</p>
+            <button
+              @click="showPartyBuildingForm = true"
+              class="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl font-medium hover:from-red-600 hover:to-pink-600 transition-all duration-200 shadow-lg shadow-red-500/25"
+            >
+              Add Party Building Article
+            </button>
+          </div>
+
+          <!-- Party Building Items Grid -->
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-for="item in partyBuildingItems" :key="item.id" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div v-if="item.mainImage" class="aspect-video bg-gray-100">
+                <img :src="item.mainImage" :alt="item.title" class="w-full h-full object-cover">
+              </div>
+              <div class="p-4">
+                <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{{ item.title }}</h3>
+                <p class="text-sm text-gray-600 mb-3 line-clamp-3">{{ item.description }}</p>
+                <div class="flex items-center justify-between text-xs text-gray-500 mb-3">
+                  <span>{{ new Date(item.date).toLocaleDateString() }}</span>
+                  <span>{{ item.views }} views</span>
+                </div>
+                <div class="flex items-center justify-between">
+                  <span :class="[
+                    'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                    item.published
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  ]">
+                    {{ item.published ? 'Published' : 'Draft' }}
+                  </span>
+                  <div class="flex space-x-2">
+                    <button
+                      @click="editPartyBuildingItem(item)"
+                      class="text-indigo-600 hover:text-indigo-900 text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="deletePartyBuildingItem(item.id)"
+                      class="text-red-600 hover:text-red-900 text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Development History Tab -->
+        <div v-else-if="activeTab === 'development-history'" class="cms-content-section">
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Development History Management</h3>
+              <p class="text-sm text-gray-600">Manage company development milestones and achievements</p>
+            </div>
+            <button
+              @click="showDevelopmentHistoryForm = true"
+              class="px-4 py-2 bg-gradient-to-r from-purple-500 to-violet-500  rounded-lg font-medium hover:from-purple-600 hover:to-violet-600 transition-all duration-200 shadow-lg shadow-purple-500/25"
+            >
+              Add New Milestone
+            </button>
+          </div>
+
+          <!-- Development History Content -->
+          <div v-if="developmentHistoryItems.length === 0" class="text-center py-12">
+            <div class="text-gray-400 mb-4">
+              <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Development History</h3>
+            <p class="text-gray-600 mb-4">Add your first development milestone to get started</p>
+            <button
+              @click="showDevelopmentHistoryForm = true"
+              class="px-6 py-3 bg-gradient-to-r from-purple-500 to-violet-500 rounded-xl font-medium hover:from-purple-600 hover:to-violet-600 transition-all duration-200 shadow-lg shadow-purple-500/25"
+            >
+              Add Development Milestone
+            </button>
+          </div>
+
+          <!-- Development History Timeline -->
+          <div v-else class="space-y-6">
+            <div v-for="item in developmentHistoryItems" :key="item.id" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center space-x-3 mb-3">
+                    <div class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+                      {{ item.year }}
+                    </div>
+                    <span :class="[
+                      'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                      item.published
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    ]">
+                      {{ item.published ? 'Published' : 'Draft' }}
+                    </span>
+                  </div>
+                  <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ item.title }}</h3>
+                  <p class="text-gray-600 mb-4">{{ item.description }}</p>
+                  <div v-if="item.achievements && item.achievements.length > 0" class="space-y-2">
+                    <h4 class="text-sm font-medium text-gray-900">Key Achievements:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                      <li v-for="achievement in item.achievements" :key="achievement" class="text-sm text-gray-600">
+                        {{ achievement }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="flex space-x-2 ml-4">
+                  <button
+                    @click="editDevelopmentHistoryItem(item)"
+                    class="text-indigo-600 hover:text-indigo-900 text-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    @click="deleteDevelopmentHistoryItem(item.id)"
+                    class="text-red-600 hover:text-red-900 text-sm"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Collaborative Projects Tab -->
+        <div v-else-if="activeTab === 'collaborative-projects'" class="cms-content-section">
+          <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Collaborative Projects Management</h3>
+              <p class="text-sm text-gray-600">Manage collaborative projects and partnerships</p>
+            </div>
+            <button
+              @click="showCollaborativeProjectsForm = true"
+              class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500  rounded-lg font-medium hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg shadow-emerald-500/25"
+            >
+              Add New Project
+            </button>
+          </div>
+
+          <!-- Collaborative Projects Content -->
+          <div v-if="collaborativeProjectsItems.length === 0" class="text-center py-12">
+            <div class="text-gray-400 mb-4">
+              <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6"></path>
+              </svg>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Collaborative Projects</h3>
+            <p class="text-gray-600 mb-4">Add your first collaborative project to get started</p>
+            <button
+              @click="showCollaborativeProjectsForm = true"
+              class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-xl font-medium hover:from-emerald-600 hover:to-teal-600 transition-all duration-200 shadow-lg shadow-emerald-500/25"
+            >
+              Add Collaborative Project
+            </button>
+          </div>
+
+          <!-- Collaborative Projects Grid -->
+          <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-for="item in collaborativeProjectsItems" :key="item.id" class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div v-if="item.image" class="aspect-video bg-gray-100">
+                <img :src="item.image" :alt="item.title" class="w-full h-full object-cover">
+              </div>
+              <div class="p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                        :class="{
+                          'bg-blue-100 text-blue-800': item.type === 'new-materials',
+                          'bg-green-100 text-green-800': item.type === 'new-energy',
+                          'bg-yellow-100 text-yellow-800': item.type === 'fly-ash',
+                          'bg-purple-100 text-purple-800': item.type === 'cooperation'
+                        }">
+                    {{ item.type.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) }}
+                  </span>
+                  <span :class="[
+                    'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                    item.published
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-red-100 text-red-800'
+                  ]">
+                    {{ item.published ? 'Published' : 'Draft' }}
+                  </span>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2 line-clamp-2">{{ item.title }}</h3>
+                <p class="text-sm text-gray-600 mb-3 line-clamp-3">{{ item.description }}</p>
+                <div v-if="item.contactName || item.contactEmail" class="text-xs text-gray-500 mb-3">
+                  <div v-if="item.contactName">Contact: {{ item.contactName }}</div>
+                  <div v-if="item.contactEmail">{{ item.contactEmail }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                  <div class="text-xs text-gray-500">
+                    {{ new Date(item.createdAt).toLocaleDateString() }}
+                  </div>
+                  <div class="flex space-x-2">
+                    <button
+                      @click="editCollaborativeProjectsItem(item)"
+                      class="text-indigo-600 hover:text-indigo-900 text-sm"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      @click="deleteCollaborativeProjectsItem(item.id)"
+                      class="text-red-600 hover:text-red-900 text-sm"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1065,22 +1378,7 @@
     <div v-if="showNewsForm" class="modal-overlay" @click="showNewsForm = false">
       <div class="modal-container" @click.stop>
         <div class="modal-header">
-          <div class="modal-header-content">
-            <h3 class="modal-title">Add News Article</h3>
-            <div class="auto-translate-controls">
-              <label class="auto-translate-toggle">
-                <input
-                  type="checkbox"
-                  v-model="autoTranslateEnabled"
-                  class="toggle-checkbox"
-                >
-                <span class="toggle-label">Auto-translate</span>
-              </label>
-              <span v-if="isAutoTranslating" class="auto-translate-indicator">
-                🔄 Translating...
-              </span>
-            </div>
-          </div>
+          <h3 class="modal-title">Add News Article</h3>
           <button @click="showNewsForm = false" class="modal-close">
             ×
           </button>
@@ -1768,9 +2066,964 @@
       </div>
     </div>
   </Transition>
+
+  <!-- Join Us Form Modal -->
+  <Transition name="modal">
+    <div v-if="showJoinUsForm" class="modal-overlay" @click="showJoinUsForm = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Add Join Us Item</h3>
+          <button @click="showJoinUsForm = false" class="modal-close">×</button>
+        </div>
+        <form @submit.prevent="submitJoinUsForm" class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeJoinUsLanguage = lang.code"
+              :class="['language-tab', { 'active': activeJoinUsLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- English Fields -->
+          <div v-show="activeJoinUsLanguage === 'en'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (English) *</label>
+              <input
+                v-model="joinUsForm.translations.en.title"
+                type="text"
+                required
+                class="form-input"
+                placeholder="Enter English title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (English)</label>
+              <textarea
+                v-model="joinUsForm.translations.en.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Requirements (English)</label>
+              <textarea
+                v-model="joinUsForm.translations.en.requirements"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English requirements"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Responsibilities (English)</label>
+              <textarea
+                v-model="joinUsForm.translations.en.responsibilities"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English responsibilities"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Mongolian Fields -->
+          <div v-show="activeJoinUsLanguage === 'mn'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Mongolian)</label>
+              <input
+                v-model="joinUsForm.translations.mn.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Mongolian title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Mongolian)</label>
+              <textarea
+                v-model="joinUsForm.translations.mn.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Requirements (Mongolian)</label>
+              <textarea
+                v-model="joinUsForm.translations.mn.requirements"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian requirements"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Responsibilities (Mongolian)</label>
+              <textarea
+                v-model="joinUsForm.translations.mn.responsibilities"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian responsibilities"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Chinese Fields -->
+          <div v-show="activeJoinUsLanguage === 'ch'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Chinese)</label>
+              <input
+                v-model="joinUsForm.translations.ch.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Chinese title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Chinese)</label>
+              <textarea
+                v-model="joinUsForm.translations.ch.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Requirements (Chinese)</label>
+              <textarea
+                v-model="joinUsForm.translations.ch.requirements"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese requirements"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Responsibilities (Chinese)</label>
+              <textarea
+                v-model="joinUsForm.translations.ch.responsibilities"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese responsibilities"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Slug *</label>
+            <input v-model="joinUsForm.slug" type="text" required class="form-input" placeholder="unique-slug">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type *</label>
+            <select v-model="joinUsForm.type" required class="form-input">
+              <option value="">Select type</option>
+              <option value="campus">Campus</option>
+              <option value="social">Social</option>
+              <option value="staff-style">Staff Style</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <input v-model="joinUsForm.category" type="text" class="form-input" placeholder="Job category">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input v-model="joinUsForm.location" type="text" class="form-input" placeholder="Location">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Salary</label>
+            <input v-model="joinUsForm.salary" type="text" class="form-input" placeholder="Salary range">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              @change="handleJoinUsImageUpload"
+              class="form-file"
+            >
+            <small class="text-gray-500">Upload an image for this job posting</small>
+          </div>
+          <div class="form-actions">
+            <button type="button" @click="showJoinUsForm = false" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary" :disabled="joinUsFormLoading">
+              {{ joinUsFormLoading ? 'Creating...' : 'Create Item' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Party Building Form Modal -->
+  <Transition name="modal">
+    <div v-if="showPartyBuildingForm" class="modal-overlay" @click="showPartyBuildingForm = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Add Party Building Article</h3>
+          <button @click="showPartyBuildingForm = false" class="modal-close">×</button>
+        </div>
+        <form @submit.prevent="submitPartyBuildingForm" class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activePartyBuildingLanguage = lang.code"
+              :class="['language-tab', { 'active': activePartyBuildingLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- English Fields -->
+          <div v-show="activePartyBuildingLanguage === 'en'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (English) *</label>
+              <input
+                v-model="partyBuildingForm.translations.en.title"
+                type="text"
+                required
+                class="form-input"
+                placeholder="Enter English title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (English)</label>
+              <textarea
+                v-model="partyBuildingForm.translations.en.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (English)</label>
+              <textarea
+                v-model="partyBuildingForm.translations.en.content"
+                rows="5"
+                class="form-textarea"
+                placeholder="Enter English content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Mongolian Fields -->
+          <div v-show="activePartyBuildingLanguage === 'mn'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Mongolian)</label>
+              <input
+                v-model="partyBuildingForm.translations.mn.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Mongolian title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Mongolian)</label>
+              <textarea
+                v-model="partyBuildingForm.translations.mn.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (Mongolian)</label>
+              <textarea
+                v-model="partyBuildingForm.translations.mn.content"
+                rows="5"
+                class="form-textarea"
+                placeholder="Enter Mongolian content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Chinese Fields -->
+          <div v-show="activePartyBuildingLanguage === 'ch'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Chinese)</label>
+              <input
+                v-model="partyBuildingForm.translations.ch.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Chinese title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Chinese)</label>
+              <textarea
+                v-model="partyBuildingForm.translations.ch.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (Chinese)</label>
+              <textarea
+                v-model="partyBuildingForm.translations.ch.content"
+                rows="5"
+                class="form-textarea"
+                placeholder="Enter Chinese content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Slug *</label>
+            <input v-model="partyBuildingForm.slug" type="text" required class="form-input" placeholder="unique-slug">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Main Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              @change="handlePartyBuildingMainImageUpload"
+              class="form-file"
+            >
+            <small class="text-gray-500">Upload the main image for this article</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Content Images</label>
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              @change="handlePartyBuildingContentImagesUpload"
+              class="form-file"
+            >
+            <small class="text-gray-500">Upload additional images for the article content</small>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Source</label>
+            <input v-model="partyBuildingForm.source" type="text" class="form-input" placeholder="Source">
+          </div>
+          <div class="form-actions">
+            <button type="button" @click="showPartyBuildingForm = false" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary" :disabled="partyBuildingFormLoading">
+              {{ partyBuildingFormLoading ? 'Creating...' : 'Create Article' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Development History Form Modal -->
+  <Transition name="modal">
+    <div v-if="showDevelopmentHistoryForm" class="modal-overlay" @click="showDevelopmentHistoryForm = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Add Development Milestone</h3>
+          <button @click="showDevelopmentHistoryForm = false" class="modal-close">×</button>
+        </div>
+        <form @submit.prevent="submitDevelopmentHistoryForm" class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeDevelopmentHistoryLanguage = lang.code"
+              :class="['language-tab', { 'active': activeDevelopmentHistoryLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- English Fields -->
+          <div v-show="activeDevelopmentHistoryLanguage === 'en'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (English) *</label>
+              <input
+                v-model="developmentHistoryForm.translations.en.title"
+                type="text"
+                required
+                class="form-input"
+                placeholder="Enter English title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (English) *</label>
+              <textarea
+                v-model="developmentHistoryForm.translations.en.description"
+                required
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English description"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Mongolian Fields -->
+          <div v-show="activeDevelopmentHistoryLanguage === 'mn'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Mongolian)</label>
+              <input
+                v-model="developmentHistoryForm.translations.mn.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Mongolian title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Mongolian)</label>
+              <textarea
+                v-model="developmentHistoryForm.translations.mn.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian description"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Chinese Fields -->
+          <div v-show="activeDevelopmentHistoryLanguage === 'ch'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Chinese)</label>
+              <input
+                v-model="developmentHistoryForm.translations.ch.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Chinese title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Chinese)</label>
+              <textarea
+                v-model="developmentHistoryForm.translations.ch.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese description"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Year *</label>
+            <input v-model="developmentHistoryForm.year" type="number" required class="form-input" placeholder="2024" min="1900" :max="new Date().getFullYear() + 10">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Achievements (one per line)</label>
+            <textarea v-model="achievementsText" class="form-input" rows="5" placeholder="Achievement 1&#10;Achievement 2&#10;Achievement 3"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" @click="showDevelopmentHistoryForm = false" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary" :disabled="developmentHistoryFormLoading">
+              {{ developmentHistoryFormLoading ? 'Creating...' : 'Create Milestone' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Collaborative Projects Form Modal -->
+  <Transition name="modal">
+    <div v-if="showCollaborativeProjectsForm" class="modal-overlay" @click="showCollaborativeProjectsForm = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Add Collaborative Project</h3>
+          <button @click="showCollaborativeProjectsForm = false" class="modal-close">×</button>
+        </div>
+        <form @submit.prevent="submitCollaborativeProjectsForm" class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeCollaborativeProjectsLanguage = lang.code"
+              :class="['language-tab', { 'active': activeCollaborativeProjectsLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- English Fields -->
+          <div v-show="activeCollaborativeProjectsLanguage === 'en'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (English) *</label>
+              <input
+                v-model="collaborativeProjectsForm.translations.en.title"
+                type="text"
+                required
+                class="form-input"
+                placeholder="Enter English title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (English)</label>
+              <textarea
+                v-model="collaborativeProjectsForm.translations.en.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter English description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (English)</label>
+              <textarea
+                v-model="collaborativeProjectsForm.translations.en.content"
+                rows="5"
+                class="form-textarea"
+                placeholder="Enter English content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Mongolian Fields -->
+          <div v-show="activeCollaborativeProjectsLanguage === 'mn'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Mongolian)</label>
+              <input
+                v-model="collaborativeProjectsForm.translations.mn.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Mongolian title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Mongolian)</label>
+              <textarea
+                v-model="collaborativeProjectsForm.translations.mn.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Mongolian description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (Mongolian)</label>
+              <textarea
+                v-model="collaborativeProjectsForm.translations.mn.content"
+                rows="5"
+                class="form-textarea"
+                placeholder="Enter Mongolian content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Chinese Fields -->
+          <div v-show="activeCollaborativeProjectsLanguage === 'ch'" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title (Chinese)</label>
+              <input
+                v-model="collaborativeProjectsForm.translations.ch.title"
+                type="text"
+                class="form-input"
+                placeholder="Enter Chinese title"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description (Chinese)</label>
+              <textarea
+                v-model="collaborativeProjectsForm.translations.ch.description"
+                rows="3"
+                class="form-textarea"
+                placeholder="Enter Chinese description"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content (Chinese)</label>
+              <textarea
+                v-model="collaborativeProjectsForm.translations.ch.content"
+                rows="5"
+                class="form-textarea"
+                placeholder="Enter Chinese content"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Slug *</label>
+            <input v-model="collaborativeProjectsForm.slug" type="text" required class="form-input" placeholder="unique-slug">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type *</label>
+            <select v-model="collaborativeProjectsForm.type" required class="form-input">
+              <option value="">Select type</option>
+              <option value="new-materials">New Materials</option>
+              <option value="new-energy">New Energy</option>
+              <option value="fly-ash">Fly Ash</option>
+              <option value="cooperation">Cooperation</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input v-model="collaborativeProjectsForm.contactEmail" type="email" class="form-input" placeholder="contact@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Name</label>
+            <input v-model="collaborativeProjectsForm.contactName" type="text" class="form-input" placeholder="Contact person">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Project Image</label>
+            <input
+              type="file"
+              accept="image/*"
+              @change="handleCollaborativeProjectsImageUpload"
+              class="form-file"
+            >
+            <small class="text-gray-500">Upload an image for this project</small>
+          </div>
+          <div class="form-actions">
+            <button type="button" @click="showCollaborativeProjectsForm = false" class="btn btn-secondary">Cancel</button>
+            <button type="submit" class="btn btn-primary" :disabled="collaborativeProjectsFormLoading">
+              {{ collaborativeProjectsFormLoading ? 'Creating...' : 'Create Project' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Join Us Edit Modal -->
+  <Transition name="modal">
+    <div v-if="showJoinUsEditModal" class="modal-overlay" @click="showJoinUsEditModal = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Join Us Item</h3>
+          <button @click="showJoinUsEditModal = false" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              type="button"
+              @click="activeJoinUsLanguage = lang.code"
+              :class="['language-tab', { 'active': activeJoinUsLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- Language sections for editing -->
+          <div v-for="lang in languages" :key="lang.code" v-show="activeJoinUsLanguage === lang.code" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title ({{ lang.name }})</label>
+              <input
+                v-model="editingJoinUsItem.translations[lang.code].title"
+                type="text"
+                class="form-input"
+                :placeholder="`Enter ${lang.name} title`"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description ({{ lang.name }})</label>
+              <textarea
+                v-model="editingJoinUsItem.translations[lang.code].description"
+                rows="3"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} description`"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Requirements ({{ lang.name }})</label>
+              <textarea
+                v-model="editingJoinUsItem.translations[lang.code].requirements"
+                rows="3"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} requirements`"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Responsibilities ({{ lang.name }})</label>
+              <textarea
+                v-model="editingJoinUsItem.translations[lang.code].responsibilities"
+                rows="3"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} responsibilities`"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Slug</label>
+            <input v-model="editingJoinUsItem.slug" type="text" class="form-input" placeholder="unique-slug">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <select v-model="editingJoinUsItem.type" class="form-input">
+              <option value="campus">Campus</option>
+              <option value="social">Social</option>
+              <option value="staff-style">Staff Style</option>
+            </select>
+          </div>
+
+          <div class="modal-actions">
+            <button @click="showJoinUsEditModal = false" class="btn btn-secondary">Cancel</button>
+            <button @click="saveJoinUsItem" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Party Building Edit Modal -->
+  <Transition name="modal">
+    <div v-if="showPartyBuildingEditModal" class="modal-overlay" @click="showPartyBuildingEditModal = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Party Building Item</h3>
+          <button @click="showPartyBuildingEditModal = false" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              @click="activePartyBuildingLanguage = lang.code"
+              :class="['language-tab', { active: activePartyBuildingLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- Language sections for editing -->
+          <div v-for="lang in languages" :key="lang.code" v-show="activePartyBuildingLanguage === lang.code" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title ({{ lang.name }})</label>
+              <input
+                v-model="editingPartyBuildingItem.translations[lang.code].title"
+                type="text"
+                class="form-input"
+                :placeholder="`Enter ${lang.name} title`"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description ({{ lang.name }})</label>
+              <textarea
+                v-model="editingPartyBuildingItem.translations[lang.code].description"
+                rows="3"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} description`"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content ({{ lang.name }})</label>
+              <textarea
+                v-model="editingPartyBuildingItem.translations[lang.code].content"
+                rows="5"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} content`"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Slug</label>
+            <input v-model="editingPartyBuildingItem.slug" type="text" class="form-input" placeholder="unique-slug">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Source</label>
+            <input v-model="editingPartyBuildingItem.source" type="text" class="form-input" placeholder="Source">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Main Image URL</label>
+            <input v-model="editingPartyBuildingItem.mainImage" type="text" class="form-input" placeholder="Image URL">
+          </div>
+
+          <div class="modal-actions">
+            <button @click="showPartyBuildingEditModal = false" class="btn btn-secondary">Cancel</button>
+            <button @click="savePartyBuildingItem" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Development History Edit Modal -->
+  <Transition name="modal">
+    <div v-if="showDevelopmentHistoryEditModal" class="modal-overlay" @click="showDevelopmentHistoryEditModal = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Development History Item</h3>
+          <button @click="showDevelopmentHistoryEditModal = false" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              @click="activeDevelopmentHistoryLanguage = lang.code"
+              :class="['language-tab', { active: activeDevelopmentHistoryLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- Language sections for editing -->
+          <div v-for="lang in languages" :key="lang.code" v-show="activeDevelopmentHistoryLanguage === lang.code" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title ({{ lang.name }})</label>
+              <input
+                v-model="editingDevelopmentHistoryItem.translations[lang.code].title"
+                type="text"
+                class="form-input"
+                :placeholder="`Enter ${lang.name} title`"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description ({{ lang.name }})</label>
+              <textarea
+                v-model="editingDevelopmentHistoryItem.translations[lang.code].description"
+                rows="5"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} description`"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Year</label>
+            <input v-model="editingDevelopmentHistoryItem.year" type="number" class="form-input" placeholder="2024">
+          </div>
+
+          <div class="modal-actions">
+            <button @click="showDevelopmentHistoryEditModal = false" class="btn btn-secondary">Cancel</button>
+            <button @click="saveDevelopmentHistoryItem" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
+  <!-- Collaborative Projects Edit Modal -->
+  <Transition name="modal">
+    <div v-if="showCollaborativeProjectsEditModal" class="modal-overlay" @click="showCollaborativeProjectsEditModal = false">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Collaborative Projects Item</h3>
+          <button @click="showCollaborativeProjectsEditModal = false" class="modal-close">×</button>
+        </div>
+
+        <div class="modal-form">
+          <!-- Language Tabs -->
+          <div class="language-tabs">
+            <button
+              v-for="lang in languages"
+              :key="lang.code"
+              @click="activeCollaborativeProjectsLanguage = lang.code"
+              :class="['language-tab', { active: activeCollaborativeProjectsLanguage === lang.code }]"
+            >
+              {{ lang.flag }} {{ lang.name }}
+            </button>
+          </div>
+
+          <!-- Language sections for editing -->
+          <div v-for="lang in languages" :key="lang.code" v-show="activeCollaborativeProjectsLanguage === lang.code" class="language-section">
+            <div class="form-group">
+              <label class="form-label">Title ({{ lang.name }})</label>
+              <input
+                v-model="editingCollaborativeProjectsItem.translations[lang.code].title"
+                type="text"
+                class="form-input"
+                :placeholder="`Enter ${lang.name} title`"
+              >
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Description ({{ lang.name }})</label>
+              <textarea
+                v-model="editingCollaborativeProjectsItem.translations[lang.code].description"
+                rows="3"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} description`"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Content ({{ lang.name }})</label>
+              <textarea
+                v-model="editingCollaborativeProjectsItem.translations[lang.code].content"
+                rows="5"
+                class="form-textarea"
+                :placeholder="`Enter ${lang.name} content`"
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- Common fields -->
+          <div class="form-group">
+            <label class="form-label">Slug</label>
+            <input v-model="editingCollaborativeProjectsItem.slug" type="text" class="form-input" placeholder="unique-slug">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Type</label>
+            <input v-model="editingCollaborativeProjectsItem.type" type="text" class="form-input" placeholder="Project Type">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Name</label>
+            <input v-model="editingCollaborativeProjectsItem.contactName" type="text" class="form-input" placeholder="Contact Name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contact Email</label>
+            <input v-model="editingCollaborativeProjectsItem.contactEmail" type="email" class="form-input" placeholder="Contact Email">
+          </div>
+
+          <div class="modal-actions">
+            <button @click="showCollaborativeProjectsEditModal = false" class="btn btn-secondary">Cancel</button>
+            <button @click="saveCollaborativeProjectsItem" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Transition>
+
 </template>
 
 <script setup>
+// Use admin layout
+definePageMeta({
+  layout: 'admin'
+})
 
 const activeTab = ref('translations')
 const searchQuery = ref('')
@@ -1781,19 +3034,43 @@ const images = ref([])
 const videos = ref([])
 const newsItems = ref([])
 const mediaItems = ref([])
+const joinUsItems = ref([])
+const partyBuildingItems = ref([])
+const developmentHistoryItems = ref([])
+const collaborativeProjectsItems = ref([])
 const showNewsForm = ref(false)
 const showMediaForm = ref(false)
+const showJoinUsForm = ref(false)
+const showPartyBuildingForm = ref(false)
+const showDevelopmentHistoryForm = ref(false)
+const showCollaborativeProjectsForm = ref(false)
 const showNewsEditModal = ref(false)
 const showMediaEditModal = ref(false)
+const showJoinUsEditModal = ref(false)
+const showPartyBuildingEditModal = ref(false)
+const showDevelopmentHistoryEditModal = ref(false)
+const showCollaborativeProjectsEditModal = ref(false)
 const editingNewsGroup = ref(null)
 const editingMediaGroup = ref(null)
+const editingJoinUsItem = ref(null)
+const editingPartyBuildingItem = ref(null)
+const editingDevelopmentHistoryItem = ref(null)
+const editingCollaborativeProjectsItem = ref(null)
 const mediaFilter = ref('all')
 const newsFormLoading = ref(false)
 const mediaFormLoading = ref(false)
+const joinUsFormLoading = ref(false)
+const partyBuildingFormLoading = ref(false)
+const developmentHistoryFormLoading = ref(false)
+const collaborativeProjectsFormLoading = ref(false)
 const activeLanguage = ref('en')
 const activeMediaLanguage = ref('en')
 const activeEditLanguage = ref('en')
 const activeEditMediaLanguage = ref('en')
+const activeJoinUsLanguage = ref('en')
+const activePartyBuildingLanguage = ref('en')
+const activeDevelopmentHistoryLanguage = ref('en')
+const activeCollaborativeProjectsLanguage = ref('en')
 
 // Auto-translation functionality
 const { autoTranslate, smartTranslate, detectLanguage } = useTranslationEngine()
@@ -1827,8 +3104,76 @@ const mediaForm = ref({
   published: true
 })
 
+// Join Us form
+const joinUsForm = ref({
+  translations: {
+    en: { title: '', description: '', requirements: '', responsibilities: '' },
+    mn: { title: '', description: '', requirements: '', responsibilities: '' },
+    ch: { title: '', description: '', requirements: '', responsibilities: '' }
+  },
+  slug: '',
+  type: '',
+  category: '',
+  location: '',
+  salary: '',
+  contact: '',
+  contactNumber: '',
+  image: '',
+  published: true
+})
+
+// Party Building form
+const partyBuildingForm = ref({
+  translations: {
+    en: { title: '', description: '', content: '' },
+    mn: { title: '', description: '', content: '' },
+    ch: { title: '', description: '', content: '' }
+  },
+  slug: '',
+  mainImage: '',
+  contentImages: '',
+  source: '',
+  published: true
+})
+
+// Development History form
+const developmentHistoryForm = ref({
+  translations: {
+    en: { title: '', description: '' },
+    mn: { title: '', description: '' },
+    ch: { title: '', description: '' }
+  },
+  year: new Date().getFullYear(),
+  achievements: [],
+  published: true
+})
+
+// Collaborative Projects form
+const collaborativeProjectsForm = ref({
+  translations: {
+    en: { title: '', description: '', content: '' },
+    mn: { title: '', description: '', content: '' },
+    ch: { title: '', description: '', content: '' }
+  },
+  slug: '',
+  type: '',
+  image: '',
+  contactEmail: '',
+  contactPhone: '',
+  contactName: '',
+  address: '',
+  published: true
+})
+
+// Helper for achievements text area
+const achievementsText = ref('')
+
 const newsImageFile = ref(null)
 const mediaFile = ref(null)
+const joinUsImageFile = ref(null)
+const partyBuildingMainImageFile = ref(null)
+const partyBuildingContentImagesFiles = ref([])
+const collaborativeProjectsImageFile = ref(null)
 const selectedImage = ref(null)
 const selectedKey = ref(null) // For single row selection
 const showEditModal = ref(false) // Show edit modal
@@ -2571,6 +3916,34 @@ function handleMediaFileUpload(event) {
   }
 }
 
+function handleJoinUsImageUpload(event) {
+  const file = event.target.files[0]
+  if (file) {
+    joinUsImageFile.value = file
+  }
+}
+
+function handlePartyBuildingMainImageUpload(event) {
+  const file = event.target.files[0]
+  if (file) {
+    partyBuildingMainImageFile.value = file
+  }
+}
+
+function handlePartyBuildingContentImagesUpload(event) {
+  const files = Array.from(event.target.files)
+  if (files.length > 0) {
+    partyBuildingContentImagesFiles.value = files
+  }
+}
+
+function handleCollaborativeProjectsImageUpload(event) {
+  const file = event.target.files[0]
+  if (file) {
+    collaborativeProjectsImageFile.value = file
+  }
+}
+
 async function submitNewsForm() {
   // Validate required English fields
   if (!newsForm.value.translations.en.title || !newsForm.value.translations.en.description) {
@@ -2706,6 +4079,333 @@ async function submitMediaForm() {
     alert('Failed to upload media materials')
   } finally {
     mediaFormLoading.value = false
+  }
+}
+
+// Submit Join Us form
+async function submitJoinUsForm() {
+  // Validate required fields
+  if (!joinUsForm.value.slug || !joinUsForm.value.type) {
+    alert('Please fill in required fields (Slug and Type)')
+    return
+  }
+
+  // Check if at least one language has a title
+  const hasTitle = languages.value.some(lang =>
+    joinUsForm.value.translations[lang.code].title.trim()
+  )
+
+  if (!hasTitle) {
+    alert('Please provide a title in at least one language')
+    return
+  }
+
+  joinUsFormLoading.value = true
+  try {
+    let imageUrl = ''
+
+    // Upload image if provided
+    if (joinUsImageFile.value) {
+      const formData = new FormData()
+      formData.append('file', joinUsImageFile.value)
+
+      const uploadResponse = await $fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (uploadResponse.success) {
+        imageUrl = uploadResponse.path
+      }
+    }
+
+    // Create records for each language
+    const promises = languages.value.map(async (lang) => {
+      const translation = joinUsForm.value.translations[lang.code]
+      if (translation.title.trim()) { // Only create if title exists
+        return $fetch('/api/join-us', {
+          method: 'POST',
+          body: {
+            slug: joinUsForm.value.slug,
+            title: translation.title,
+            description: translation.description,
+            requirements: translation.requirements,
+            responsibilities: translation.responsibilities,
+            type: joinUsForm.value.type,
+            category: joinUsForm.value.category,
+            location: joinUsForm.value.location,
+            salary: joinUsForm.value.salary,
+            contact: joinUsForm.value.contact,
+            contactNumber: joinUsForm.value.contactNumber,
+            image: imageUrl,
+            published: joinUsForm.value.published,
+            locale: lang.code
+          }
+        })
+      }
+    })
+
+    const responses = await Promise.all(promises.filter(Boolean))
+    const allSuccessful = responses.every(response => response?.success)
+
+    if (allSuccessful) {
+      alert('Join Us item created successfully!')
+      showJoinUsForm.value = false
+      // Reset form
+      joinUsForm.value = {
+        translations: {
+          en: { title: '', description: '', requirements: '', responsibilities: '' },
+          mn: { title: '', description: '', requirements: '', responsibilities: '' },
+          ch: { title: '', description: '', requirements: '', responsibilities: '' }
+        },
+        slug: '',
+        type: '',
+        category: '',
+        location: '',
+        salary: '',
+        contact: '',
+        contactNumber: '',
+        image: '',
+        published: true
+      }
+      joinUsImageFile.value = null
+      // Refresh data
+      await loadJoinUsItems()
+    } else {
+      alert('Failed to create Join Us item: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to create Join Us item:', error)
+    alert('Failed to create Join Us item')
+  } finally {
+    joinUsFormLoading.value = false
+  }
+}
+
+// Submit Party Building form
+async function submitPartyBuildingForm() {
+  // Validate required fields
+  if (!partyBuildingForm.value.slug) {
+    alert('Please fill in required field: Slug')
+    return
+  }
+
+  // Check if at least one language has a title
+  const hasTitle = languages.value.some(lang =>
+    partyBuildingForm.value.translations[lang.code].title.trim()
+  )
+
+  if (!hasTitle) {
+    alert('Please provide a title in at least one language')
+    return
+  }
+
+  partyBuildingFormLoading.value = true
+  try {
+    let mainImageUrl = ''
+    let contentImagesUrls = []
+
+    // Upload main image if provided
+    if (partyBuildingMainImageFile.value) {
+      const formData = new FormData()
+      formData.append('file', partyBuildingMainImageFile.value)
+
+      const uploadResponse = await $fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (uploadResponse.success) {
+        mainImageUrl = uploadResponse.path
+      }
+    }
+
+    // Upload content images if provided
+    if (partyBuildingContentImagesFiles.value.length > 0) {
+      for (const file of partyBuildingContentImagesFiles.value) {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        const uploadResponse = await $fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (uploadResponse.success) {
+          contentImagesUrls.push(uploadResponse.path)
+        }
+      }
+    }
+
+    // Create records for each language
+    const promises = languages.value.map(async (lang) => {
+      const translation = partyBuildingForm.value.translations[lang.code]
+      if (translation.title.trim()) { // Only create if title exists
+        return $fetch('/api/party-building', {
+          method: 'POST',
+          body: {
+            slug: partyBuildingForm.value.slug,
+            title: translation.title,
+            description: translation.description,
+            content: translation.content,
+            mainImage: mainImageUrl,
+            contentImages: contentImagesUrls.join(','),
+            source: partyBuildingForm.value.source,
+            published: partyBuildingForm.value.published,
+            locale: lang.code
+          }
+        })
+      }
+    })
+
+    const responses = await Promise.all(promises.filter(Boolean))
+    const allSuccessful = responses.every(response => response?.success)
+
+    if (allSuccessful) {
+      alert('Party Building article created successfully!')
+      showPartyBuildingForm.value = false
+      // Reset form
+      partyBuildingForm.value = {
+        translations: {
+          en: { title: '', description: '', content: '' },
+          mn: { title: '', description: '', content: '' },
+          ch: { title: '', description: '', content: '' }
+        },
+        slug: '',
+        mainImage: '',
+        contentImages: '',
+        source: '',
+        published: true
+      }
+      partyBuildingMainImageFile.value = null
+      partyBuildingContentImagesFiles.value = []
+      // Refresh data
+      await loadPartyBuildingItems()
+    } else {
+      alert('Failed to create Party Building article: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to create Party Building article:', error)
+    alert('Failed to create Party Building article')
+  } finally {
+    partyBuildingFormLoading.value = false
+  }
+}
+
+// Submit Development History form
+async function submitDevelopmentHistoryForm() {
+  if (!developmentHistoryForm.value.year || !developmentHistoryForm.value.title || !developmentHistoryForm.value.description) {
+    alert('Please fill in required fields (Year, Title, and Description)')
+    return
+  }
+
+  developmentHistoryFormLoading.value = true
+  try {
+    // Convert achievements text to array
+    const achievements = achievementsText.value
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.length > 0)
+
+    const formData = {
+      ...developmentHistoryForm.value,
+      achievements
+    }
+
+    const response = await $fetch('/api/development-history', {
+      method: 'POST',
+      body: formData
+    })
+
+    if (response.success) {
+      alert('Development milestone created successfully!')
+      showDevelopmentHistoryForm.value = false
+      // Reset form
+      developmentHistoryForm.value = {
+        year: new Date().getFullYear(),
+        title: '',
+        description: '',
+        achievements: [],
+        published: true,
+        locale: 'en'
+      }
+      achievementsText.value = ''
+      // Refresh data
+      await loadDevelopmentHistoryItems()
+    } else {
+      alert('Failed to create Development milestone: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to create Development milestone:', error)
+    alert('Failed to create Development milestone')
+  } finally {
+    developmentHistoryFormLoading.value = false
+  }
+}
+
+// Submit Collaborative Projects form
+async function submitCollaborativeProjectsForm() {
+  if (!collaborativeProjectsForm.value.slug || !collaborativeProjectsForm.value.title || !collaborativeProjectsForm.value.type) {
+    alert('Please fill in required fields (Slug, Title, and Type)')
+    return
+  }
+
+  collaborativeProjectsFormLoading.value = true
+  try {
+    let imageUrl = ''
+
+    // Upload image if provided
+    if (collaborativeProjectsImageFile.value) {
+      const formData = new FormData()
+      formData.append('file', collaborativeProjectsImageFile.value)
+
+      const uploadResponse = await $fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (uploadResponse.success) {
+        imageUrl = uploadResponse.path
+      }
+    }
+
+    const response = await $fetch('/api/collaborative-projects', {
+      method: 'POST',
+      body: {
+        ...collaborativeProjectsForm.value,
+        image: imageUrl
+      }
+    })
+
+    if (response.success) {
+      alert('Collaborative project created successfully!')
+      showCollaborativeProjectsForm.value = false
+      // Reset form
+      collaborativeProjectsForm.value = {
+        slug: '',
+        title: '',
+        description: '',
+        content: '',
+        type: '',
+        image: '',
+        contactEmail: '',
+        contactPhone: '',
+        contactName: '',
+        address: '',
+        published: true,
+        locale: 'en'
+      }
+      collaborativeProjectsImageFile.value = null
+      // Refresh data
+      await loadCollaborativeProjectsItems()
+    } else {
+      alert('Failed to create Collaborative project: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to create Collaborative project:', error)
+    alert('Failed to create Collaborative project')
+  } finally {
+    collaborativeProjectsFormLoading.value = false
   }
 }
 
@@ -3462,6 +5162,487 @@ async function handleVideoUpload(event) {
   }
 }
 
+// Join Us Management Functions
+async function loadJoinUsItems() {
+  try {
+    const response = await $fetch('/api/join-us', {
+      query: {
+        page: 1,
+        limit: 100,
+        locale: 'en'
+      }
+    })
+    if (response.success) {
+      joinUsItems.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to load join us items:', error)
+  }
+}
+
+async function deleteJoinUsItem(id) {
+  if (!confirm('Are you sure you want to delete this item?')) return
+
+  try {
+    const response = await $fetch(`/api/join-us/${id}`, {
+      method: 'DELETE'
+    })
+    if (response.success) {
+      await loadJoinUsItems()
+    } else {
+      alert('Failed to delete item: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to delete join us item:', error)
+    alert('Failed to delete item')
+  }
+}
+
+async function toggleJoinUsStatus(id, published) {
+  try {
+    const response = await $fetch(`/api/join-us/${id}`, {
+      method: 'PUT',
+      body: { published: !published }
+    })
+    if (response.success) {
+      await loadJoinUsItems()
+    } else {
+      alert('Failed to update status: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to update join us status:', error)
+    alert('Failed to update status')
+  }
+}
+
+async function editJoinUsItem(item) {
+  try {
+    // Load all translations for this slug
+    const response = await $fetch(`/api/join-us?slug=${item.slug}`)
+    if (response.success) {
+      const allTranslations = response.data
+
+      // Group translations by locale
+      editingJoinUsItem.value = {
+        ...item,
+        translations: {
+          en: allTranslations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '', requirements: '', responsibilities: '' },
+          mn: allTranslations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '', requirements: '', responsibilities: '' },
+          ch: allTranslations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '', requirements: '', responsibilities: '' }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load join us translations:', error)
+    // Fallback to single item
+    editingJoinUsItem.value = {
+      ...item,
+      translations: {
+        en: { locale: 'en', title: item.title || '', description: item.description || '', requirements: item.requirements || '', responsibilities: item.responsibilities || '' },
+        mn: { locale: 'mn', title: '', description: '', requirements: '', responsibilities: '' },
+        ch: { locale: 'ch', title: '', description: '', requirements: '', responsibilities: '' }
+      }
+    }
+  }
+
+  activeJoinUsLanguage.value = 'en'
+  showJoinUsEditModal.value = true
+}
+
+async function saveJoinUsItem() {
+  if (!editingJoinUsItem.value) return
+
+  try {
+    // Save/update each language that has content
+    const promises = languages.value.map(async (lang) => {
+      const translation = editingJoinUsItem.value.translations[lang.code]
+      if (translation.title.trim()) { // Only save if title exists
+        const method = translation.id ? 'PUT' : 'POST'
+        const url = translation.id ? `/api/join-us/${translation.id}` : '/api/join-us'
+
+        return $fetch(url, {
+          method,
+          body: {
+            slug: editingJoinUsItem.value.slug,
+            title: translation.title,
+            description: translation.description,
+            requirements: translation.requirements,
+            responsibilities: translation.responsibilities,
+            type: editingJoinUsItem.value.type,
+            category: editingJoinUsItem.value.category,
+            location: editingJoinUsItem.value.location,
+            salary: editingJoinUsItem.value.salary,
+            contact: editingJoinUsItem.value.contact,
+            contactNumber: editingJoinUsItem.value.contactNumber,
+            image: editingJoinUsItem.value.image,
+            published: editingJoinUsItem.value.published,
+            locale: lang.code
+          }
+        })
+      }
+    })
+
+    const responses = await Promise.all(promises.filter(Boolean))
+    const allSuccessful = responses.every(response => response?.success)
+
+    if (allSuccessful) {
+      await loadJoinUsItems()
+      showJoinUsEditModal.value = false
+      alert('Join Us item updated successfully!')
+    } else {
+      alert('Failed to update some translations')
+    }
+  } catch (error) {
+    console.error('Failed to save join us item:', error)
+    alert('Failed to save join us item')
+  }
+}
+
+// Party Building Management Functions
+async function loadPartyBuildingItems() {
+  try {
+    const response = await $fetch('/api/party-building', {
+      query: {
+        page: 1,
+        limit: 100,
+        locale: 'en'
+      }
+    })
+    if (response.success) {
+      partyBuildingItems.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to load party building items:', error)
+  }
+}
+
+async function deletePartyBuildingItem(id) {
+  if (!confirm('Are you sure you want to delete this party building article?')) return
+
+  try {
+    const response = await $fetch(`/api/party-building/${id}`, {
+      method: 'DELETE'
+    })
+    if (response.success) {
+      await loadPartyBuildingItems()
+    } else {
+      alert('Failed to delete article: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to delete party building item:', error)
+    alert('Failed to delete article')
+  }
+}
+
+async function editPartyBuildingItem(item) {
+  try {
+    // Load all translations for this slug
+    const response = await $fetch(`/api/party-building?slug=${item.slug}`)
+    if (response.success) {
+      const allTranslations = response.data
+
+      // Group translations by locale
+      editingPartyBuildingItem.value = {
+        ...item,
+        translations: {
+          en: allTranslations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '', content: '' },
+          mn: allTranslations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '', content: '' },
+          ch: allTranslations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '', content: '' }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load party building translations:', error)
+    // Fallback to single item
+    editingPartyBuildingItem.value = {
+      ...item,
+      translations: {
+        en: { locale: 'en', title: item.title || '', description: item.description || '', content: item.content || '' },
+        mn: { locale: 'mn', title: '', description: '', content: '' },
+        ch: { locale: 'ch', title: '', description: '', content: '' }
+      }
+    }
+  }
+
+  activePartyBuildingLanguage.value = 'en'
+  showPartyBuildingEditModal.value = true
+}
+
+async function savePartyBuildingItem() {
+  if (!editingPartyBuildingItem.value) return
+
+  try {
+    // Save/update each language that has content
+    const promises = languages.value.map(async (lang) => {
+      const translation = editingPartyBuildingItem.value.translations[lang.code]
+      if (translation.title.trim()) { // Only save if title exists
+        const method = translation.id ? 'PUT' : 'POST'
+        const url = translation.id ? `/api/party-building/${translation.id}` : '/api/party-building'
+
+        return $fetch(url, {
+          method,
+          body: {
+            slug: editingPartyBuildingItem.value.slug,
+            title: translation.title,
+            description: translation.description,
+            content: translation.content,
+            source: editingPartyBuildingItem.value.source,
+            mainImage: editingPartyBuildingItem.value.mainImage,
+            contentImages: editingPartyBuildingItem.value.contentImages,
+            date: editingPartyBuildingItem.value.date,
+            views: editingPartyBuildingItem.value.views,
+            published: editingPartyBuildingItem.value.published,
+            locale: lang.code
+          }
+        })
+      }
+    })
+
+    const responses = await Promise.all(promises.filter(Boolean))
+    const allSuccessful = responses.every(response => response?.success)
+
+    if (allSuccessful) {
+      await loadPartyBuildingItems()
+      showPartyBuildingEditModal.value = false
+      alert('Party Building item updated successfully!')
+    } else {
+      alert('Failed to update some translations')
+    }
+  } catch (error) {
+    console.error('Failed to save party building item:', error)
+    alert('Failed to save changes')
+  }
+}
+
+// Development History Management Functions
+async function loadDevelopmentHistoryItems() {
+  try {
+    const response = await $fetch('/api/development-history', {
+      query: {
+        page: 1,
+        limit: 100,
+        locale: 'en'
+      }
+    })
+    if (response.success) {
+      developmentHistoryItems.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to load development history items:', error)
+  }
+}
+
+async function deleteDevelopmentHistoryItem(id) {
+  if (!confirm('Are you sure you want to delete this development history item?')) return
+
+  try {
+    const response = await $fetch(`/api/development-history/${id}`, {
+      method: 'DELETE'
+    })
+    if (response.success) {
+      await loadDevelopmentHistoryItems()
+    } else {
+      alert('Failed to delete item: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to delete development history item:', error)
+    alert('Failed to delete item')
+  }
+}
+
+async function editDevelopmentHistoryItem(item) {
+  try {
+    // Load all translations for this slug
+    const response = await $fetch(`/api/development-history?slug=${item.slug}`)
+    if (response.success) {
+      const allTranslations = response.data
+
+      // Group translations by locale
+      editingDevelopmentHistoryItem.value = {
+        ...item,
+        translations: {
+          en: allTranslations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '' },
+          mn: allTranslations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '' },
+          ch: allTranslations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '' }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load development history translations:', error)
+    // Fallback to single item
+    editingDevelopmentHistoryItem.value = {
+      ...item,
+      translations: {
+        en: { locale: 'en', title: item.title || '', description: item.description || '' },
+        mn: { locale: 'mn', title: '', description: '' },
+        ch: { locale: 'ch', title: '', description: '' }
+      }
+    }
+  }
+
+  activeDevelopmentHistoryLanguage.value = 'en'
+  showDevelopmentHistoryEditModal.value = true
+}
+
+async function saveDevelopmentHistoryItem() {
+  if (!editingDevelopmentHistoryItem.value) return
+
+  try {
+    // Save/update each language that has content
+    const promises = languages.value.map(async (lang) => {
+      const translation = editingDevelopmentHistoryItem.value.translations[lang.code]
+      if (translation.title.trim()) { // Only save if title exists
+        const method = translation.id ? 'PUT' : 'POST'
+        const url = translation.id ? `/api/development-history/${translation.id}` : '/api/development-history'
+
+        return $fetch(url, {
+          method,
+          body: {
+            slug: editingDevelopmentHistoryItem.value.slug,
+            title: translation.title,
+            description: translation.description,
+            year: editingDevelopmentHistoryItem.value.year,
+            achievements: editingDevelopmentHistoryItem.value.achievements,
+            published: editingDevelopmentHistoryItem.value.published,
+            locale: lang.code
+          }
+        })
+      }
+    })
+
+    const responses = await Promise.all(promises.filter(Boolean))
+    const allSuccessful = responses.every(response => response?.success)
+
+    if (allSuccessful) {
+      await loadDevelopmentHistoryItems()
+      showDevelopmentHistoryEditModal.value = false
+      alert('Development History item updated successfully!')
+    } else {
+      alert('Failed to update some translations')
+    }
+  } catch (error) {
+    console.error('Failed to save development history item:', error)
+    alert('Failed to save changes')
+  }
+}
+
+// Collaborative Projects Management Functions
+async function loadCollaborativeProjectsItems() {
+  try {
+    const response = await $fetch('/api/collaborative-projects', {
+      query: {
+        page: 1,
+        limit: 100,
+        locale: 'en'
+      }
+    })
+    if (response.success) {
+      collaborativeProjectsItems.value = response.data
+    }
+  } catch (error) {
+    console.error('Failed to load collaborative projects items:', error)
+  }
+}
+
+async function deleteCollaborativeProjectsItem(id) {
+  if (!confirm('Are you sure you want to delete this collaborative project?')) return
+
+  try {
+    const response = await $fetch(`/api/collaborative-projects/${id}`, {
+      method: 'DELETE'
+    })
+    if (response.success) {
+      await loadCollaborativeProjectsItems()
+    } else {
+      alert('Failed to delete project: ' + response.error)
+    }
+  } catch (error) {
+    console.error('Failed to delete collaborative project:', error)
+    alert('Failed to delete project')
+  }
+}
+
+async function editCollaborativeProjectsItem(item) {
+  try {
+    // Load all translations for this slug
+    const response = await $fetch(`/api/collaborative-projects?slug=${item.slug}`)
+    if (response.success) {
+      const allTranslations = response.data
+
+      // Group translations by locale
+      editingCollaborativeProjectsItem.value = {
+        ...item,
+        translations: {
+          en: allTranslations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '', content: '' },
+          mn: allTranslations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '', content: '' },
+          ch: allTranslations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '', content: '' }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load collaborative projects translations:', error)
+    // Fallback to single item
+    editingCollaborativeProjectsItem.value = {
+      ...item,
+      translations: {
+        en: { locale: 'en', title: item.title || '', description: item.description || '', content: item.content || '' },
+        mn: { locale: 'mn', title: '', description: '', content: '' },
+        ch: { locale: 'ch', title: '', description: '', content: '' }
+      }
+    }
+  }
+
+  activeCollaborativeProjectsLanguage.value = 'en'
+  showCollaborativeProjectsEditModal.value = true
+}
+
+async function saveCollaborativeProjectsItem() {
+  if (!editingCollaborativeProjectsItem.value) return
+
+  try {
+    // Save/update each language that has content
+    const promises = languages.value.map(async (lang) => {
+      const translation = editingCollaborativeProjectsItem.value.translations[lang.code]
+      if (translation.title.trim()) { // Only save if title exists
+        const method = translation.id ? 'PUT' : 'POST'
+        const url = translation.id ? `/api/collaborative-projects/${translation.id}` : '/api/collaborative-projects'
+
+        return $fetch(url, {
+          method,
+          body: {
+            slug: editingCollaborativeProjectsItem.value.slug,
+            title: translation.title,
+            description: translation.description,
+            content: translation.content,
+            type: editingCollaborativeProjectsItem.value.type,
+            image: editingCollaborativeProjectsItem.value.image,
+            address: editingCollaborativeProjectsItem.value.address,
+            contactName: editingCollaborativeProjectsItem.value.contactName,
+            contactEmail: editingCollaborativeProjectsItem.value.contactEmail,
+            contactPhone: editingCollaborativeProjectsItem.value.contactPhone,
+            published: editingCollaborativeProjectsItem.value.published,
+            locale: lang.code
+          }
+        })
+      }
+    })
+
+    const responses = await Promise.all(promises.filter(Boolean))
+    const allSuccessful = responses.every(response => response?.success)
+
+    if (allSuccessful) {
+      await loadCollaborativeProjectsItems()
+      showCollaborativeProjectsEditModal.value = false
+      alert('Collaborative Projects item updated successfully!')
+    } else {
+      alert('Failed to update some translations')
+    }
+  } catch (error) {
+    console.error('Failed to save collaborative projects item:', error)
+    alert('Failed to save changes')
+  }
+}
+
 // Load data on component mount
 onMounted(async () => {
   console.log('Admin page mounted, loading data...')
@@ -3469,6 +5650,10 @@ onMounted(async () => {
   await loadVideos()
   await loadNews()
   await loadMediaMaterials()
+  await loadJoinUsItems()
+  await loadPartyBuildingItems()
+  await loadDevelopmentHistoryItems()
+  await loadCollaborativeProjectsItems()
   console.log('Data loading complete')
 })
 </script>

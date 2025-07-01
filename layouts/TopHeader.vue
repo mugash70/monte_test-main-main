@@ -15,17 +15,17 @@
     <!-- Desktop navigation -->
     <ul v-if="!isMobile" class="header-list">
       <li class="list-item" @mouseenter="activeMenu = 'group'" @mouseleave="activeMenu = null">
-        <span :class="{ 'vertical-text': isMongolian }">{{ t('Group Website Group') }}</span>
+        <span :class="{ 'vertical-text': isMongolian }">{{ t('nav.Group Website Group') }}</span>
         <div v-if="activeMenu == 'group'" class="dropdown-menu">
           <ul>
             <li>
               <a href="/" target="_blank" rel="noopener noreferrer" :class="{ 'vertical-text': isMongolian }">
-                {{ t('Monte Group') }}
+                {{ t('nav.Monte Group') }}
               </a>
             </li>
             <li>
               <a href="https://www.apt-alu-products.com/en/" target="_blank" rel="noopener noreferrer" :class="{ 'vertical-text': isMongolian }">
-                {{ t('Apt') }}
+                {{ t('nav.Apt') }}
               </a>
             </li>
           </ul>
@@ -35,17 +35,17 @@
       <li class="separator"></li>
 
       <li class="list-item" @mouseenter="activeMenu = 'staff'" @mouseleave="activeMenu = null">
-        <span :class="{ 'vertical-text': isMongolian }">{{ t('Staff Channel') }}</span>
+        <span :class="{ 'vertical-text': isMongolian }">{{ t('nav.Staff Channel') }}</span>
         <div v-if="activeMenu == 'staff'" class="dropdown-menu">
           <ul>
             <li>
               <a href="https://ecology.mengtaigroup.com/wui/index.html#/?logintype=1&time=1748897582084" target="_blank" rel="noopener noreferrer" :class="{ 'vertical-text': isMongolian }">
-                {{ t('Collaborative Office') }}
+                {{ t('nav.Collaborative Office') }}
               </a>
             </li>
             <li>
               <a href="https://mail.mengtaigroup.com/" target="_blank" rel="noopener noreferrer" :class="{ 'vertical-text': isMongolian }">
-                {{ t('Corporate Email') }}
+                {{ t('nav.Corporate Email') }}
               </a>
             </li>
           </ul>

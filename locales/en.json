@@ -593,7 +593,29 @@
     "card4": {
       "description": "Mengtai Group signed an agreement to acquire Swiss Aluminium",
       "source": "Mengtai Group"
-    }
+    },
+    "detail": {
+      "title": "News Detail",
+      "subtitle": "Latest news and updates"
+    },
+    "views": "views",
+    "attachments": "Attachments",
+    "notFound": "News Not Found",
+    "notFoundDescription": "The news article you are looking for could not be found."
+  },
+  "common": {
+    "loading": "Loading...",
+    "backToNews": "Back to News"
+  },
+  "error": {
+    "notFound": "Page Not Found",
+    "serverError": "Server Error",
+    "generic": "An Error Occurred",
+    "notFoundDescription": "The page you are looking for could not be found.",
+    "serverErrorDescription": "Something went wrong on our end. Please try again later.",
+    "genericDescription": "An unexpected error occurred. Please try again.",
+    "goHome": "Go Home",
+    "refresh": "Refresh Page"
   },
   "footer": {
     "qrText": "Micro Channel Public Platform",
@@ -602,6 +624,7 @@
     "publicSecurity": "Public Security No 15060202000517",
     "publicSecurityAlt": "Public Security Record",
     "sitemap": "Sitemap",
+    "admin": "Admin",
     "links": {
       "aboutUs": "About Us",
       "contact": "Contact",

@@ -39,17 +39,92 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import HeroBanner from '@/components/ui/HeroBanner.vue';
 import { useI18n } from 'vue-i18n';
 const { t,locale } = useI18n();
 const isMongolian = computed(() => locale.value === 'mn');
 const selectedYear = ref(2022);
+const loading = ref(false);
+
 interface Achievement {
   items: string[];
 }
 
-const achievements = ref<Record<string, Achievement>>({
+interface DevelopmentHistoryItem {
+  id: number;
+  title: string;
+  description: string;
+  year: number;
+  achievements?: any;
+  locale: string;
+  published: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const achievements = ref<Record<string, Achievement>>({})
+const developmentHistoryData = ref<any[]>([])
+
+// Load data from API
+const loadDevelopmentHistoryData = async () => {
+  loading.value = true;
+  try {
+    const response = await $fetch('/api/development-history', {
+      query: {
+        locale: locale.value,
+        published: true
+      }
+    });
+
+    if (response.success) {
+      developmentHistoryData.value = response.data as any[];
+
+      // Group data by year
+      const groupedData: Record<string, Achievement> = {};
+      response.data.forEach((item: any) => {
+        if (!groupedData[item.year]) {
+          groupedData[item.year] = { items: [] };
+        }
+        if (item.title) {
+          groupedData[item.year].items.push(item.title);
+        }
+        if (item.description) {
+          groupedData[item.year].items.push(item.description);
+        }
+        if (item.achievements && Array.isArray(item.achievements)) {
+          groupedData[item.year].items.push(...item.achievements);
+        }
+      });
+
+      achievements.value = groupedData;
+
+      // Set default year to the latest available
+      const availableYears = Object.keys(groupedData).map(Number).sort((a, b) => b - a);
+      if (availableYears.length > 0) {
+        selectedYear.value = availableYears[0];
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load development history data:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Watch for locale changes
+watch(locale, () => {
+  loadDevelopmentHistoryData();
+});
+
+// Load data on mount
+onMounted(() => {
+  loadDevelopmentHistoryData();
+});
+
+// Keep the old static data as fallback (commented out as it's not used)
+/*
+const staticAchievements = ref<Record<string, Achievement>>({
   2024: {
     items: [
       "dev.achievements.item2024[0]"
@@ -129,6 +204,7 @@ const achievements = ref<Record<string, Achievement>>({
     ]
   }
 });
+*/
 
 const years = computed(() => Object.keys(achievements.value).sort().reverse());
 const filteredAchievements = computed(() => {

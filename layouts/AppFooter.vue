@@ -7,7 +7,7 @@
             <h3 class="footer-title" :class="{ 'vertical-text': isMongolian }">{{ t(section.title) }}</h3>
             <ul>
               <li v-for="(link, idx) in section.links" :key="idx">
-                <a :href="link.href" class="footer-link" :class="{ 'vertical-text': isMongolian }">{{ t(link.text) }}</a>
+                <router-link :to="localePath(link.href)" class="footer-link" :class="{ 'vertical-text': isMongolian }">{{ t(link.text) }}</router-link>
               </li>
             </ul>
           </div>
@@ -34,6 +34,8 @@
           </div>
           <span class="divider">|</span>
           <a href="https://www.mengtaigroup.com/wzdt.jhtml" target="_blank" rel="noopener noreferrer" :class="{ 'vertical-text': isMongolian }">{{ t('footer.sitemap') }}</a>
+          <span class="divider">|</span>
+          <a href="/admin/translations" :class="{ 'vertical-text': isMongolian }" style="color: #e74c3c; font-weight: 600;">{{ t('footer.admin') }}</a>
         </div>
 
         <div class="footer-social">
@@ -49,9 +51,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
-
-const { locale } = useI18n();
+const { t, locale } = useI18n();
+const localePath = useLocalePath();
 const isMongolian = computed(() => locale.value === 'mn');
 
 const footerLinks = [

@@ -30,15 +30,32 @@ export default defineNuxtConfig({
       cookieKey: 'i18n_locale',
       alwaysRedirect: false,
       fallbackLocale: 'en'
-    }
+    },
+    // Disable warnings for missing routes
+    skipSettingLocaleOnNavigate: true
   },
   vite: {
     define: {
       'process.env.DEBUG': 'false',
     },
   },
+
   typescript: {
     strict: true,
     typeCheck: true
+  },
+
+  // Router configuration to suppress warnings
+  router: {
+    options: {
+      strict: false,
+      sensitive: false
+    }
+  },
+
+  // Suppress common warnings
+  ssr: true,
+  experimental: {
+    payloadExtraction: false
   }
 })

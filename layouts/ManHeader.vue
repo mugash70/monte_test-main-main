@@ -4,7 +4,7 @@
       <div class="header-container">
         <!-- Logo -->
         <div class="logo-section">
-          <router-link to="/" aria-label="Home">
+          <router-link :to="localePath('/')" aria-label="Home">
             <img src="/logo.svg" alt="Company Logo" class="logo" />
           </router-link>
         </div>
@@ -22,22 +22,22 @@
                 t('mainHeader.aboutMonte')
               }}</router-link>
               <div class="dropdown-menu" :class="{ visible: hoverDropdown === 'about-monte' }">
-                <router-link to="/company-profile" class="dropdown-link">{{
+                <router-link :to="localePath('/company-profile')" class="dropdown-link">{{
                   t('mainHeader.aboutLinks.companyProfile')
                 }}</router-link>
-                <router-link to="/chairman-speech" class="dropdown-link">{{
+                <router-link :to="localePath('/chairman-speech')" class="dropdown-link">{{
                   t('mainHeader.aboutLinks.chairmanSpeech')
                 }}</router-link>
-                <router-link to="/corporate-culture" class="dropdown-link">{{
+                <router-link :to="localePath('/corporate-culture')" class="dropdown-link">{{
                   t('mainHeader.aboutLinks.corporateCulture')
                 }}</router-link>
-                <router-link to="/development-history" class="dropdown-link">{{
+                <router-link :to="localePath('/development-history')" class="dropdown-link">{{
                   t('mainHeader.aboutLinks.developmentHistory')
                 }}</router-link>
-                <router-link to="/party-building" class="dropdown-link">{{
+                <router-link :to="localePath('/party-building')" class="dropdown-link">{{
                   t('mainHeader.aboutLinks.partyBuilding')
                 }}</router-link>
-                <router-link to="/join-us" class="dropdown-link">{{
+                <router-link :to="localePath('/join-us')" class="dropdown-link">{{
                   t('mainHeader.aboutLinks.joinUs')
                 }}</router-link>
               </div>
@@ -82,12 +82,12 @@
               @mouseenter="hoverDropdown = 'news'"
               @mouseleave="hoverDropdown = null"
             >
-              <router-link to="/news" class="nav-link">{{ t('mainHeader.news') }}</router-link>
+              <router-link :to="localePath('/news')" class="nav-link">{{ t('mainHeader.news') }}</router-link>
               <div class="dropdown-menu" :class="{ visible: hoverDropdown === 'news' }">
-                <router-link to="/news" class="dropdown-link">{{
+                <router-link :to="localePath('/news')" class="dropdown-link">{{
                   t('mainHeader.newsLinks.news')
                 }}</router-link>
-                <router-link to="/media-materials" class="dropdown-link">{{
+                <router-link :to="localePath('/media-materials')" class="dropdown-link">{{
                   t('mainHeader.newsLinks.mediaMaterial')
                 }}</router-link>
               </div>
@@ -103,10 +103,10 @@
                 t('mainHeader.externalCooperation')
               }}</router-link>
               <div class="dropdown-menu" :class="{ visible: hoverDropdown === 'cooperation' }">
-                <router-link to="/products" class="dropdown-link">{{
+                <router-link :to="localePath('/products')" class="dropdown-link">{{
                   t('mainHeader.cooperationLinks.products')
                 }}</router-link>
-                <router-link to="/collaborative-projects" class="dropdown-link">{{
+                <router-link :to="localePath('/collaborative-projects')" class="dropdown-link">{{
                   t('mainHeader.cooperationLinks.collaborativeProjects')
                 }}</router-link>
                 <a
@@ -116,7 +116,7 @@
                   rel="noopener noreferrer"
                   >{{ t('mainHeader.cooperationLinks.biddingPlatform') }}</a
                 >
-                <router-link to="/offline-tender-announcement" class="dropdown-link">{{
+                <router-link :to="localePath('/offline-tender-announcement')" class="dropdown-link">{{
                   t('mainHeader.cooperationLinks.offlineTender')
                 }}</router-link>
                 <a
@@ -190,7 +190,7 @@
             <ul class="mega-menu-links" :class="{ 'vertical-text': isMongolian }">
               <li v-for="item in industries" :key="item.id">
                 <router-link
-                  :to="item.href"
+                  :to="localePath(item.href)"
                   class="mega-menu-link"
                   @mouseenter="setActiveIndustry(item.id)"
                   :class="{ active: activeIndustry?.id === item.id }"
@@ -222,7 +222,7 @@
             <ul class="mega-menu-links" :class="{ 'vertical-text': isMongolian }">
               <li v-for="item in development" :key="item.id">
                 <router-link
-                  :to="item.href"
+                  :to="localePath(item.href)"
                   class="mega-menu-link"
                   @mouseenter="setActiveDevelopment(item.id)"
                   :class="{ active: activeDevelopment?.id === item.id }"
@@ -250,7 +250,7 @@
     <div class="mobile-drawer" :class="{ active: mobileMenuOpen }">
       <div class="mobile-drawer-header">
         <div>
-          <router-link to="/" aria-label="Home">
+          <router-link :to="localePath('/')" aria-label="Home">
             <img src="/logo.svg" alt="Company Logo" class="logo" />
           </router-link>
         </div>
@@ -279,42 +279,42 @@
             :class="{ expanded: activeSubmenu === 'about' }"
           >
             <router-link
-              to="/company-profile"
+              :to="localePath('/company-profile')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.aboutLinks.companyProfile') }}</router-link
             >
             <router-link
-              to="/chairman-speech"
+              :to="localePath('/chairman-speech')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.aboutLinks.chairmanSpeech') }}</router-link
             >
             <router-link
-              to="/corporate-culture"
+              :to="localePath('/corporate-culture')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.aboutLinks.corporateCulture') }}</router-link
             >
             <router-link
-              to="/development-history"
+              :to="localePath('/development-history')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.aboutLinks.developmentHistory') }}</router-link
             >
             <router-link
-              to="/party-building"
+              :to="localePath('/party-building')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.aboutLinks.partyBuilding') }}</router-link
             >
             <router-link
-              to="/join-us"
+              :to="localePath('/join-us')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
@@ -342,35 +342,35 @@
             :class="{ expanded: activeSubmenu === 'industries' }"
           >
             <router-link
-              to="/aluminium-industry-sector"
+              :to="localePath('/aluminium-industry-sector')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.industry.title1') }}</router-link
             >
             <router-link
-              to="/coal-industry"
+              :to="localePath('/coal-industry')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.industry.title2') }}</router-link
             >
             <router-link
-              to="/thermal-power-plate"
+              :to="localePath('/thermal-power-plate')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.industry.title3') }}</router-link
             >
             <router-link
-              to="/modern-agriculture"
+              :to="localePath('/modern-agriculture')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.industry.title4') }}</router-link
             >
             <router-link
-              to="/modern-trade-logistics"
+              :to="localePath('/modern-trade-logistics')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
@@ -398,21 +398,21 @@
             :class="{ expanded: activeSubmenu === 'development' }"
           >
             <router-link
-              to="/technology-monte"
+              :to="localePath('/technology-monte')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.development.title1') }}</router-link
             >
             <router-link
-              to="/green-monte"
+              :to="localePath('/green-monte')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.development.title2') }}</router-link
             >
             <router-link
-              to="/responsibility-monte"
+              :to="localePath('/responsibility-monte')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
@@ -440,14 +440,14 @@
             :class="{ expanded: activeSubmenu === 'news' }"
           >
             <router-link
-              to="/news"
+              :to="localePath('/news')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.newsLinks.news') }}</router-link
             >
             <router-link
-              to="/media-materials"
+              :to="localePath('/media-materials')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
@@ -475,14 +475,14 @@
             :class="{ expanded: activeSubmenu === 'cooperation' }"
           >
             <router-link
-              to="/products"
+              :to="localePath('/products')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
               >{{ t('mainHeader.cooperationLinks.products') }}</router-link
             >
             <router-link
-              to="/collaborative-projects"
+              :to="localePath('/collaborative-projects')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
@@ -497,7 +497,7 @@
               >{{ t('mainHeader.cooperationLinks.biddingPlatform') }}</a
             >
             <router-link
-              to="/offline-tender-announcement"
+              :to="localePath('/offline-tender-announcement')"
               class="mobile-submenu-link"
               :class="{ 'vertical-text': isMongolian }"
               @click="closeMobileMenu"
@@ -525,6 +525,7 @@ import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const { t, locale } = useI18n()
+const localePath = useLocalePath()
 const route = useRoute()
 const isMongolian = computed(() => locale.value === 'mn')
 

@@ -68,21 +68,27 @@
         </p>
 
         <section class="campus-jobs">
-          <template v-if="jobs.length > 0">
+          <template v-if="loading">
+            <p class="loading-text" :class="{ 'vertical-no': isMongolian }">
+              {{ t('form.Loading...') }}
+            </p>
+          </template>
+
+          <template v-else-if="jobs.length > 0">
             <div
               v-for="(job, index) in jobs"
-              :key="index"
+              :key="job.id"
               :class="['job-card', { expanded: job.showDetails }]"
               @click="toggleDetails(index, $event)"
             >
               <div class="job-header">
                 <div class="job-info" :class="{ 'vertical-no': isMongolian }">
-                  <p>{{ t(`form.${job.title}`) }}</p>
-                  <p>{{ t(`form.${job.degree}`) }}</p>
-                  <p>{{ t(`form.${job.vacancies}`) }}</p>
+                  <p>{{ job.title }}</p>
+                  <p>{{ job.category || 'N/A' }}</p>
+                  <p>{{ job.type || 'N/A' }}</p>
                 </div>
                 <div class="job-meta">
-                  <span class="date">{{ job.date }}</span>
+                  <span class="date">{{ new Date(job.createdAt).toLocaleDateString() }}</span>
                   <button class="expand-btn" @click.stop="toggleDetails(index)">
                     <FontAwesomeIcon
                       :icon="['fas', 'chevron-right']"
@@ -96,50 +102,41 @@
                 <div class="job-meta-row">
                   <p :class="{ 'vertical-no': isMongolian }">
                     <strong :class="{ 'vertical-no': isMongolian }">{{ t('form.Job Category') }}:</strong>
-                    {{ t(`form.${job.category}`) }}
+                    {{ job.category || 'N/A' }}
                   </p>
                   <p :class="{ 'vertical-no': isMongolian }">
                     <strong>{{ t('form.Work Location') }}:</strong>
-                    {{ t(`form.${job.location}`) }}
+                    {{ job.location || 'N/A' }}
                   </p>
                   <p :class="{ 'vertical-no': isMongolian }">
                     <strong>{{ t('form.Salary Range') }}:</strong>
-                    {{ job.salary }}
+                    {{ job.salary || 'N/A' }}
                   </p>
                   <p :class="{ 'vertical-no': isMongolian }">
                     <strong>{{ t('form.Contact') }}:</strong>
-                    {{ job.contact }}
+                    {{ job.contact || 'N/A' }}
                   </p>
                   <p :class="{ 'vertical-no': isMongolian }">
                     <strong>{{ t('form.Contact Number') }}:</strong>
-                    {{ job.contactnumber }}
+                    {{ job.contactNumber || 'N/A' }}
+                  </p>
+                </div>
+
+                <div class="job-description" v-if="job.description">
+                  <p :class="{ 'vertical-no': isMongolian }">
+                    <strong>{{ t('form.Description') }}:</strong>
+                    {{ job.description }}
                   </p>
                 </div>
 
                 <div class="job-details">
-                  <div class="column">
+                  <div class="column" v-if="job.responsibilities">
                     <h4 :class="{ 'vertical-no': isMongolian }">{{ t('form.Job Responsibilities') }}</h4>
-                    <ul>
-                      <li
-                        v-for="(item, i) in job.responsibilities"
-                        :key="i"
-                        :class="{ 'vertical-text': isMongolian }"
-                      >
-                        {{ t(item) }}
-                      </li>
-                    </ul>
+                    <div :class="{ 'vertical-text': isMongolian }" v-html="job.responsibilities.replace(/\n/g, '<br>')"></div>
                   </div>
-                  <div class="column">
+                  <div class="column" v-if="job.requirements">
                     <h4 :class="{ 'vertical-no': isMongolian }">{{ t('form.Qualifications') }}</h4>
-                    <ul>
-                      <li
-                        v-for="(item, i) in job.qualifications"
-                        :key="i"
-                        :class="{ 'vertical-text': isMongolian }"
-                      >
-                        {{ t(item) }}
-                      </li>
-                    </ul>
+                    <div :class="{ 'vertical-text': isMongolian }" v-html="job.requirements.replace(/\n/g, '<br>')"></div>
                   </div>
                 </div>
 
@@ -163,32 +160,35 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, ref, computed } from 'vue';
+import { nextTick, ref, computed, onMounted, watch } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import HeroBanner from '@/components/ui/HeroBanner.vue';
-import { jobData } from '../../data/jobs';
 import StaffData from '@/components/StaffData.vue';
-import { useI18n } from 'vue-i18n';
-const { t } = useI18n();
+
 library.add(fas);
 
-const { locale } = useI18n();
+const { t, locale } = useI18n();
 const isMongolian = computed(() => locale.value === 'mn');
 
 interface Job {
+  id: number;
+  slug: string;
   title: string;
-  degree: string;
-  vacancies: string;
-  date: string;
+  description: string;
+  type: string;
   category: string;
   location: string;
   salary: string;
   contact: string;
-  contactnumber: string;
-  responsibilities: string[];
-  qualifications: string[];
+  contactNumber: string;
+  requirements: string;
+  responsibilities: string;
+  image: string;
+  published: boolean;
+  locale: string;
+  createdAt: string;
   showDetails: boolean;
 }
 
@@ -200,19 +200,71 @@ const selectedLocation = ref('');
 const isCategoryOpen = ref(false);
 const isLocationOpen = ref(false);
 
-const categories = ref<string[]>([]);
-const locations = ref<string[]>([]);
+const categories = ref<string[]>(['All']);
+const locations = ref<string[]>(['All']);
 const jobs = ref<Job[]>([]);
+const allJobs = ref<Job[]>([]);
+const loading = ref(false);
 
-const loadTabData = () => {
-  const source = activeTab.value === 'Campus Recruitment' ? jobData.campusRecruitment : jobData.socialRecruitment;
-  categories.value = source.categories;
-  locations.value = source.locations;
-  jobs.value = source.jobs.map(job => ({ ...job, showDetails: false }));
+// Load data from API
+const loadJoinUsData = async () => {
+  loading.value = true;
+  try {
+    const response = await $fetch('/api/join-us', {
+      query: {
+        locale: locale.value,
+        published: true
+      }
+    });
+
+    if (response.success) {
+      allJobs.value = response.data.map((job: any) => ({
+        ...job,
+        showDetails: false
+      }));
+
+      // Extract unique categories and locations
+      const uniqueCategories = [...new Set(allJobs.value.map(job => job.category).filter(Boolean))];
+      const uniqueLocations = [...new Set(allJobs.value.map(job => job.location).filter(Boolean))];
+
+      categories.value = ['All', ...uniqueCategories];
+      locations.value = ['All', ...uniqueLocations];
+
+      // Filter by current tab
+      filterJobsByTab();
+    }
+  } catch (error) {
+    console.error('Failed to load join us data:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Filter jobs by active tab
+const filterJobsByTab = () => {
+  let filteredJobs = allJobs.value;
+
+  // Filter by tab type
+  if (activeTab.value === 'Campus Recruitment') {
+    filteredJobs = allJobs.value.filter(job => job.type === 'campus');
+  } else if (activeTab.value === 'Social Recruitment') {
+    filteredJobs = allJobs.value.filter(job => job.type === 'social');
+  } else if (activeTab.value === 'Staff Style') {
+    filteredJobs = allJobs.value.filter(job => job.type === 'staff-style');
+  }
+
+  jobs.value = filteredJobs;
 };
 
 // Initial load
-loadTabData();
+onMounted(() => {
+  loadJoinUsData();
+});
+
+// Watch for locale changes
+watch(locale, () => {
+  loadJoinUsData();
+});
 
 const changeTab = (tab: string) => {
   activeTab.value = tab;
@@ -221,7 +273,7 @@ const changeTab = (tab: string) => {
   selectedCategory.value = '';
   selectedLocation.value = '';
   searchKeyword.value = '';
-  loadTabData();
+  filterJobsByTab();
 };
 
 const toggleCategory = () => {
@@ -245,13 +297,24 @@ const selectLocation = (location: string) => {
 };
 
 const searchJobs = () => {
-  const source = activeTab.value === 'Campus Recruitment' ? jobData.campusRecruitment.jobs : jobData.socialRecruitment.jobs;
+  let filteredJobs = allJobs.value;
+
+  // Filter by tab type first
+  if (activeTab.value === 'Campus Recruitment') {
+    filteredJobs = filteredJobs.filter(job => job.type === 'campus');
+  } else if (activeTab.value === 'Social Recruitment') {
+    filteredJobs = filteredJobs.filter(job => job.type === 'social');
+  } else if (activeTab.value === 'Staff Style') {
+    filteredJobs = filteredJobs.filter(job => job.type === 'staff-style');
+  }
+
+  // Apply search filters
   const keyword = searchKeyword.value.toLowerCase();
-  jobs.value = source
+  jobs.value = filteredJobs
     .filter(job =>
       (!selectedCategory.value || selectedCategory.value === 'All' || job.category === selectedCategory.value) &&
       (!selectedLocation.value || selectedLocation.value === 'All' || job.location === selectedLocation.value) &&
-      (!keyword || job.title.toLowerCase().includes(keyword))
+      (!keyword || job.title.toLowerCase().includes(keyword) || job.description.toLowerCase().includes(keyword))
     )
     .map(job => ({ ...job, showDetails: false }));
 };

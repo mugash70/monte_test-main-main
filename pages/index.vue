@@ -69,7 +69,7 @@
               <h3>{{ t(activeCard.title) }}</h3>
               <p>{{ t(activeCard.description) }}</p>
               <router-link
-                :to="activeCard.link"
+                :to="localePath(activeCard.link)"
                 class="chevron-icon"
                 :class="{ active: chevronHovered }"
                 @mouseenter="chevronHovered = true"
@@ -111,6 +111,7 @@ import { defineComponent } from 'vue'
 
 
 const { locale, t } = useI18n();
+const localePath = useLocalePath();
 const isMongolian = computed(() => locale.value === 'mn');
 defineComponent({
   components: {
