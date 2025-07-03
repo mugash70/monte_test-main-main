@@ -195,9 +195,9 @@
 
 <script setup lang="ts">
 import { ref,onMounted, onUnmounted,computed } from 'vue';
-
+import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-const { locale: currentLocale, setLocale } = useI18n();
+const { locale: currentLocale } = useI18n();
 
 
 const activeMenu = ref<string | null>(null);
@@ -245,8 +245,14 @@ const getLanguageDisplay = () => {
 
 const setLanguage = async (newLocale: 'en' | 'mn' | 'ch') => {
   console.log('Switching to locale:', newLocale);
-  await setLocale(newLocale);
-  console.log('Current locale after switch:', currentLocale.value);
+  const router = useRouter();
+  const route = useRoute();
+
+  // Get current path without locale prefix
+  const currentPath = route.path.replace(/^\/(en|mn|ch)/, '') || '/';
+
+  // Navigate to the same path with new locale
+  await navigateTo(`/${newLocale}${currentPath}`, { replace: true });
 };
 
 

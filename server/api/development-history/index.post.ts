@@ -11,7 +11,9 @@ export default defineEventHandler(async (event) => {
       title,
       description,
       achievements,
-      locale = 'en'
+      locale = 'en',
+      published = true,
+      upsert = false
     } = body
 
     // Validate required fields
@@ -31,18 +33,43 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Create the development history item
-    const developmentHistoryItem = await prisma.developmentHistory.create({
-      data: {
-        year: yearInt,
-        title,
-        description,
-        achievements: achievements ? JSON.stringify(achievements) : null,
-        locale,
-        published: true,
-        updatedAt: new Date()
-      }
-    })
+    // Create or update the development history item
+    const developmentHistoryItem = upsert
+      ? await prisma.developmentHistory.upsert({
+          where: {
+            year_locale: {
+              year: yearInt,
+              locale
+            }
+          },
+          update: {
+            title,
+            description,
+            achievements: achievements ? JSON.stringify(achievements) : null,
+            published,
+            updatedAt: new Date()
+          },
+          create: {
+            year: yearInt,
+            title,
+            description,
+            achievements: achievements ? JSON.stringify(achievements) : null,
+            locale,
+            published,
+            updatedAt: new Date()
+          }
+        })
+      : await prisma.developmentHistory.create({
+          data: {
+            year: yearInt,
+            title,
+            description,
+            achievements: achievements ? JSON.stringify(achievements) : null,
+            locale,
+            published,
+            updatedAt: new Date()
+          }
+        })
 
     return {
       success: true,

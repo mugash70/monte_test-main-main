@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="`/news/${item.slug}`" target="_blank" rel="noopener noreferrer" class="card-link">
+  <router-link :to="localePath(`/news/${item.slug}`)" target="_blank" rel="noopener noreferrer" class="card-link">
     <div class="card-item" :class="{ 'vertical-layout': isMongolian }">
       <div class="card-image">
         <img :src="item.image" alt="Card Image" />
@@ -17,6 +17,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t, locale } = useI18n();
+const localePath = useLocalePath();
 const isMongolian = computed(() => locale.value === 'mn');
 
 const props = defineProps<{

@@ -7,7 +7,24 @@
             <h3 class="footer-title" :class="{ 'vertical-text': isMongolian }">{{ t(section.title) }}</h3>
             <ul>
               <li v-for="(link, idx) in section.links" :key="idx">
-                <router-link :to="localePath(link.href)" class="footer-link" :class="{ 'vertical-text': isMongolian }">{{ t(link.text) }}</router-link>
+                <a
+                  v-if="link.href.startsWith('http')"
+                  :href="link.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="footer-link"
+                  :class="{ 'vertical-text': isMongolian }"
+                >
+                  {{ t(link.text) }}
+                </a>
+                <router-link
+                  v-else
+                  :to="localePath(link.href)"
+                  class="footer-link"
+                  :class="{ 'vertical-text': isMongolian }"
+                >
+                  {{ t(link.text) }}
+                </router-link>
               </li>
             </ul>
           </div>
@@ -97,9 +114,9 @@ const footerLinks = [
     links: [
       { text: "footer.link5.text1", href: "/products" },
       { text: "footer.link5.text2", href: "/collaborative-projects" },
-      { text: "footer.link5.text3", href: "/https://fkpt.mengtaigroup.com/mtDev/jingjia/user/login.html" },
+      { text: "footer.link5.text3", href: "https://fkpt.mengtaigroup.com/mtDev/jingjia/user/login.html" },
       { text: "footer.link5.text4", href: "/offline-tender-announcement" },
-      { text: "footer.link5.text5", href: "/https://mall-front.caigou.mengtaigroup.com/inquiry/index?initQueryType=BID_INFO" }
+      { text: "footer.link5.text5", href: "https://mall-front.caigou.mengtaigroup.com/inquiry/index?initQueryType=BID_INFO" }
     ]
   }
 ];

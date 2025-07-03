@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     const limit = parseInt(query.limit as string) || 10
     const search = query.search as string || ''
     const locale = query.locale as string || 'en'
-    const slug = query.slug as string
+    const year = query.year as string
 
     const skip = (page - 1) * limit
 
@@ -19,10 +19,10 @@ export default defineEventHandler(async (event) => {
       locale: locale
     }
 
-    // If slug is provided, get all translations for that slug
-    if (slug) {
+    // If year is provided, get all translations for that year
+    if (year) {
       delete where.locale // Remove locale filter to get all translations
-      where.slug = slug
+      where.year = parseInt(year)
     }
 
     if (search) {

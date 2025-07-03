@@ -17,7 +17,9 @@ export default defineEventHandler(async (event) => {
       contactPhone,
       contactName,
       address,
-      locale = 'en'
+      locale = 'en',
+      published = true,
+      upsert = false
     } = body
 
     // Validate required fields
@@ -39,24 +41,74 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Create the collaborative project
-    const collaborativeProject = await prisma.collaborativeProject.create({
-      data: {
-        slug,
-        title,
-        description,
-        content: content ? JSON.stringify(content) : null,
-        type,
-        image,
-        contactEmail,
-        contactPhone,
-        contactName,
-        address,
-        locale,
-        published: true,
-        updatedAt: new Date()
+    // For upsert operations, we need to handle the unique slug constraint
+    let collaborativeProject
+
+    if (upsert) {
+      // First, try to find existing item with this slug and locale
+      const existing = await prisma.collaborativeProject.findFirst({
+        where: { slug, locale }
+      })
+
+      if (existing) {
+        // Update existing item
+        collaborativeProject = await prisma.collaborativeProject.update({
+          where: { id: existing.id },
+          data: {
+            title,
+            description,
+            content: content ? JSON.stringify(content) : null,
+            type,
+            image,
+            contactEmail,
+            contactPhone,
+            contactName,
+            address,
+            published,
+            updatedAt: new Date()
+          }
+        })
+      } else {
+        // Create new item with unique slug for this locale
+        const uniqueSlug = `${slug}-${locale}`
+        collaborativeProject = await prisma.collaborativeProject.create({
+          data: {
+            slug: uniqueSlug,
+            title,
+            description,
+            content: content ? JSON.stringify(content) : null,
+            type,
+            image,
+            contactEmail,
+            contactPhone,
+            contactName,
+            address,
+            locale,
+            published,
+            updatedAt: new Date()
+          }
+        })
       }
-    })
+    } else {
+      // Regular create operation
+      collaborativeProject = await prisma.collaborativeProject.create({
+        data: {
+          slug,
+          title,
+          description,
+          content: content ? JSON.stringify(content) : null,
+          type,
+          image,
+          contactEmail,
+          contactPhone,
+          contactName,
+          address,
+          locale,
+          published,
+          updatedAt: new Date()
+        }
+      })
+    }
 
     return {
       success: true,

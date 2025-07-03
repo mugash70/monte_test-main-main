@@ -54,13 +54,13 @@
           <aside class="news-sidebar">
             <div v-if="prevArticle" class="sidebar-link">
               <strong :class="{ 'vertical-link': isMongolian }">{{t('news.prev')}}: </strong>
-              <router-link :to="`/news/${prevArticle.slug}`" :class="{ 'vertical-link': isMongolian }">
+              <router-link :to="localePath(`/news/${prevArticle.slug}`)" :class="{ 'vertical-link': isMongolian }">
                 {{ t(truncateText(prevArticle.descriptionKey), 50) }}
               </router-link>
             </div>
             <div v-if="nextArticle" class="sidebar-link">
               <strong :class="{ 'vertical-link': isMongolian }">{{t('news.next')}}: </strong>
-              <router-link :to="`/news/${nextArticle.slug}`" :class="{ 'vertical-link': isMongolian }">
+              <router-link :to="localePath(`/news/${nextArticle.slug}`)" :class="{ 'vertical-link': isMongolian }">
                 {{ t(truncateText(nextArticle.descriptionKey), 50) }}
               </router-link>
             </div>
@@ -86,6 +86,7 @@ import { useNews } from '@/composables/useNews'
 import { useI18n } from 'vue-i18n';
 
 const { t, locale } = useI18n();
+const localePath = useLocalePath();
 const isMongolian = computed(() => locale.value === 'mn');
 
 

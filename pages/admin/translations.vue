@@ -2799,7 +2799,7 @@
 
   <!-- Party Building Edit Modal -->
   <Transition name="modal">
-    <div v-if="showPartyBuildingEditModal" class="modal-overlay" @click="showPartyBuildingEditModal = false">
+    <div v-if="showPartyBuildingEditModal && editingPartyBuildingItem?.translations" class="modal-overlay" @click="showPartyBuildingEditModal = false">
       <div class="modal-container" @click.stop>
         <div class="modal-header">
           <h3 class="modal-title">Edit Party Building Item</h3>
@@ -2854,8 +2854,8 @@
 
           <!-- Common fields -->
           <div class="form-group">
-            <label class="form-label">Slug</label>
-            <input v-model="editingPartyBuildingItem.slug" type="text" class="form-input" placeholder="unique-slug">
+            <label class="form-label">Base Slug</label>
+            <input v-model="editingPartyBuildingItem.baseSlug" type="text" class="form-input" placeholder="unique-slug">
           </div>
           <div class="form-group">
             <label class="form-label">Source</label>
@@ -2877,7 +2877,7 @@
 
   <!-- Development History Edit Modal -->
   <Transition name="modal">
-    <div v-if="showDevelopmentHistoryEditModal" class="modal-overlay" @click="showDevelopmentHistoryEditModal = false">
+    <div v-if="showDevelopmentHistoryEditModal && editingDevelopmentHistoryItem?.translations" class="modal-overlay" @click="showDevelopmentHistoryEditModal = false">
       <div class="modal-container" @click.stop>
         <div class="modal-header">
           <h3 class="modal-title">Edit Development History Item</h3>
@@ -2937,7 +2937,7 @@
 
   <!-- Collaborative Projects Edit Modal -->
   <Transition name="modal">
-    <div v-if="showCollaborativeProjectsEditModal" class="modal-overlay" @click="showCollaborativeProjectsEditModal = false">
+    <div v-if="showCollaborativeProjectsEditModal && editingCollaborativeProjectsItem?.translations" class="modal-overlay" @click="showCollaborativeProjectsEditModal = false">
       <div class="modal-container" @click.stop>
         <div class="modal-header">
           <h3 class="modal-title">Edit Collaborative Projects Item</h3>
@@ -2992,8 +2992,8 @@
 
           <!-- Common fields -->
           <div class="form-group">
-            <label class="form-label">Slug</label>
-            <input v-model="editingCollaborativeProjectsItem.slug" type="text" class="form-input" placeholder="unique-slug">
+            <label class="form-label">Base Slug</label>
+            <input v-model="editingCollaborativeProjectsItem.baseSlug" type="text" class="form-input" placeholder="unique-slug">
           </div>
           <div class="form-group">
             <label class="form-label">Type</label>
@@ -4091,7 +4091,7 @@ async function submitJoinUsForm() {
   }
 
   // Check if at least one language has a title
-  const hasTitle = languages.value.some(lang =>
+  const hasTitle = languages.some(lang =>
     joinUsForm.value.translations[lang.code].title.trim()
   )
 
@@ -4120,7 +4120,7 @@ async function submitJoinUsForm() {
     }
 
     // Create records for each language
-    const promises = languages.value.map(async (lang) => {
+    const promises = languages.map(async (lang) => {
       const translation = joinUsForm.value.translations[lang.code]
       if (translation.title.trim()) { // Only create if title exists
         return $fetch('/api/join-us', {
@@ -4191,7 +4191,7 @@ async function submitPartyBuildingForm() {
   }
 
   // Check if at least one language has a title
-  const hasTitle = languages.value.some(lang =>
+  const hasTitle = languages.some(lang =>
     partyBuildingForm.value.translations[lang.code].title.trim()
   )
 
@@ -4238,7 +4238,7 @@ async function submitPartyBuildingForm() {
     }
 
     // Create records for each language
-    const promises = languages.value.map(async (lang) => {
+    const promises = languages.map(async (lang) => {
       const translation = partyBuildingForm.value.translations[lang.code]
       if (translation.title.trim()) { // Only create if title exists
         return $fetch('/api/party-building', {
@@ -5254,7 +5254,7 @@ async function saveJoinUsItem() {
 
   try {
     // Save/update each language that has content
-    const promises = languages.value.map(async (lang) => {
+    const promises = languages.map(async (lang) => {
       const translation = editingJoinUsItem.value.translations[lang.code]
       if (translation.title.trim()) { // Only save if title exists
         const method = translation.id ? 'PUT' : 'POST'
@@ -5336,32 +5336,55 @@ async function deletePartyBuildingItem(id) {
 
 async function editPartyBuildingItem(item) {
   try {
-    // Load all translations for this slug
-    const response = await $fetch(`/api/party-building?slug=${item.slug}`)
+    // Extract base slug (remove locale suffix if present)
+    const baseSlug = item.slug.replace(/-(en|mn|ch)$/, '')
+
+    // Load all translations for this base slug
+    const response = await $fetch(`/api/party-building`)
     if (response.success) {
-      const allTranslations = response.data
+      const allItems = response.data
+
+      // Find all items with the same base slug
+      const relatedItems = allItems.filter(i => {
+        const itemBaseSlug = i.slug.replace(/-(en|mn|ch)$/, '')
+        return itemBaseSlug === baseSlug
+      })
 
       // Group translations by locale
       editingPartyBuildingItem.value = {
         ...item,
-        translations: {
-          en: allTranslations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '', content: '' },
-          mn: allTranslations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '', content: '' },
-          ch: allTranslations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '', content: '' }
-        }
+        baseSlug: baseSlug || item.slug,
+        translations: {}
       }
+
+      // Initialize translations for each language
+      languages.forEach(lang => {
+        editingPartyBuildingItem.value.translations[lang.code] =
+          relatedItems.find(t => t.locale === lang.code) || {
+            locale: lang.code,
+            title: '',
+            description: '',
+            content: ''
+          }
+      })
     }
   } catch (error) {
     console.error('Failed to load party building translations:', error)
     // Fallback to single item
+    const baseSlug = item.slug.replace(/-(en|mn|ch)$/, '')
     editingPartyBuildingItem.value = {
       ...item,
-      translations: {
-        en: { locale: 'en', title: item.title || '', description: item.description || '', content: item.content || '' },
-        mn: { locale: 'mn', title: '', description: '', content: '' },
-        ch: { locale: 'ch', title: '', description: '', content: '' }
-      }
+      baseSlug: baseSlug || item.slug,
+      translations: {}
     }
+
+    // Initialize translations for each language
+    languages.forEach(lang => {
+      editingPartyBuildingItem.value.translations[lang.code] =
+        lang.code === item.locale
+          ? { locale: lang.code, title: item.title || '', description: item.description || '', content: item.content || '' }
+          : { locale: lang.code, title: '', description: '', content: '' }
+    })
   }
 
   activePartyBuildingLanguage.value = 'en'
@@ -5373,16 +5396,16 @@ async function savePartyBuildingItem() {
 
   try {
     // Save/update each language that has content
-    const promises = languages.value.map(async (lang) => {
+    const promises = languages.map(async (lang) => {
       const translation = editingPartyBuildingItem.value.translations[lang.code]
-      if (translation.title.trim()) { // Only save if title exists
-        const method = translation.id ? 'PUT' : 'POST'
-        const url = translation.id ? `/api/party-building/${translation.id}` : '/api/party-building'
-
-        return $fetch(url, {
-          method,
+      console.log(`Processing ${lang.code} translation:`, translation)
+      if (translation && translation.title && translation.title.trim()) { // Only save if title exists
+        const baseSlug = editingPartyBuildingItem.value.baseSlug || editingPartyBuildingItem.value.slug?.replace(/-(en|mn|ch)$/, '') || editingPartyBuildingItem.value.slug
+        console.log(`Saving ${lang.code} with baseSlug:`, baseSlug)
+        return $fetch('/api/party-building', {
+          method: 'POST',
           body: {
-            slug: editingPartyBuildingItem.value.slug,
+            slug: baseSlug,
             title: translation.title,
             description: translation.description,
             content: translation.content,
@@ -5392,13 +5415,15 @@ async function savePartyBuildingItem() {
             date: editingPartyBuildingItem.value.date,
             views: editingPartyBuildingItem.value.views,
             published: editingPartyBuildingItem.value.published,
-            locale: lang.code
+            locale: lang.code,
+            upsert: true // Flag to indicate this should be an upsert operation
           }
         })
       }
     })
 
     const responses = await Promise.all(promises.filter(Boolean))
+    console.log('Party Building save responses:', responses)
     const allSuccessful = responses.every(response => response?.success)
 
     if (allSuccessful) {
@@ -5406,6 +5431,7 @@ async function savePartyBuildingItem() {
       showPartyBuildingEditModal.value = false
       alert('Party Building item updated successfully!')
     } else {
+      console.error('Failed responses:', responses.filter(r => !r?.success))
       alert('Failed to update some translations')
     }
   } catch (error) {
@@ -5452,32 +5478,42 @@ async function deleteDevelopmentHistoryItem(id) {
 
 async function editDevelopmentHistoryItem(item) {
   try {
-    // Load all translations for this slug
-    const response = await $fetch(`/api/development-history?slug=${item.slug}`)
+    // Load all translations for this year
+    const response = await $fetch(`/api/development-history?year=${item.year}`)
     if (response.success) {
       const allTranslations = response.data
 
       // Group translations by locale
       editingDevelopmentHistoryItem.value = {
         ...item,
-        translations: {
-          en: allTranslations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '' },
-          mn: allTranslations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '' },
-          ch: allTranslations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '' }
-        }
+        translations: {}
       }
+
+      // Initialize translations for each language
+      languages.forEach(lang => {
+        editingDevelopmentHistoryItem.value.translations[lang.code] =
+          allTranslations.find(t => t.locale === lang.code) || {
+            locale: lang.code,
+            title: '',
+            description: ''
+          }
+      })
     }
   } catch (error) {
     console.error('Failed to load development history translations:', error)
     // Fallback to single item
     editingDevelopmentHistoryItem.value = {
       ...item,
-      translations: {
-        en: { locale: 'en', title: item.title || '', description: item.description || '' },
-        mn: { locale: 'mn', title: '', description: '' },
-        ch: { locale: 'ch', title: '', description: '' }
-      }
+      translations: {}
     }
+
+    // Initialize translations for each language
+    languages.forEach(lang => {
+      editingDevelopmentHistoryItem.value.translations[lang.code] =
+        lang.code === item.locale
+          ? { locale: lang.code, title: item.title || '', description: item.description || '' }
+          : { locale: lang.code, title: '', description: '' }
+    })
   }
 
   activeDevelopmentHistoryLanguage.value = 'en'
@@ -5489,28 +5525,28 @@ async function saveDevelopmentHistoryItem() {
 
   try {
     // Save/update each language that has content
-    const promises = languages.value.map(async (lang) => {
+    const promises = languages.map(async (lang) => {
       const translation = editingDevelopmentHistoryItem.value.translations[lang.code]
-      if (translation.title.trim()) { // Only save if title exists
-        const method = translation.id ? 'PUT' : 'POST'
-        const url = translation.id ? `/api/development-history/${translation.id}` : '/api/development-history'
-
-        return $fetch(url, {
-          method,
+      console.log(`Processing ${lang.code} translation:`, translation)
+      if (translation && translation.title && translation.title.trim()) { // Only save if title exists
+        // For development history, we use upsert based on year and locale
+        return $fetch('/api/development-history', {
+          method: 'POST',
           body: {
-            slug: editingDevelopmentHistoryItem.value.slug,
+            year: editingDevelopmentHistoryItem.value.year,
             title: translation.title,
             description: translation.description,
-            year: editingDevelopmentHistoryItem.value.year,
             achievements: editingDevelopmentHistoryItem.value.achievements,
             published: editingDevelopmentHistoryItem.value.published,
-            locale: lang.code
+            locale: lang.code,
+            upsert: true // Flag to indicate this should be an upsert operation
           }
         })
       }
     })
 
     const responses = await Promise.all(promises.filter(Boolean))
+    console.log('Development History save responses:', responses)
     const allSuccessful = responses.every(response => response?.success)
 
     if (allSuccessful) {
@@ -5518,6 +5554,7 @@ async function saveDevelopmentHistoryItem() {
       showDevelopmentHistoryEditModal.value = false
       alert('Development History item updated successfully!')
     } else {
+      console.error('Failed responses:', responses.filter(r => !r?.success))
       alert('Failed to update some translations')
     }
   } catch (error) {
@@ -5564,32 +5601,55 @@ async function deleteCollaborativeProjectsItem(id) {
 
 async function editCollaborativeProjectsItem(item) {
   try {
-    // Load all translations for this slug
-    const response = await $fetch(`/api/collaborative-projects?slug=${item.slug}`)
+    // Extract base slug (remove locale suffix if present)
+    const baseSlug = item.slug.replace(/-(en|mn|ch)$/, '')
+
+    // Load all translations for this base slug
+    const response = await $fetch(`/api/collaborative-projects`)
     if (response.success) {
-      const allTranslations = response.data
+      const allItems = response.data
+
+      // Find all items with the same base slug
+      const relatedItems = allItems.filter(i => {
+        const itemBaseSlug = i.slug.replace(/-(en|mn|ch)$/, '')
+        return itemBaseSlug === baseSlug
+      })
 
       // Group translations by locale
       editingCollaborativeProjectsItem.value = {
         ...item,
-        translations: {
-          en: allTranslations.find(t => t.locale === 'en') || { locale: 'en', title: '', description: '', content: '' },
-          mn: allTranslations.find(t => t.locale === 'mn') || { locale: 'mn', title: '', description: '', content: '' },
-          ch: allTranslations.find(t => t.locale === 'ch') || { locale: 'ch', title: '', description: '', content: '' }
-        }
+        baseSlug: baseSlug || item.slug,
+        translations: {}
       }
+
+      // Initialize translations for each language
+      languages.forEach(lang => {
+        editingCollaborativeProjectsItem.value.translations[lang.code] =
+          relatedItems.find(t => t.locale === lang.code) || {
+            locale: lang.code,
+            title: '',
+            description: '',
+            content: ''
+          }
+      })
     }
   } catch (error) {
     console.error('Failed to load collaborative projects translations:', error)
     // Fallback to single item
+    const baseSlug = item.slug.replace(/-(en|mn|ch)$/, '')
     editingCollaborativeProjectsItem.value = {
       ...item,
-      translations: {
-        en: { locale: 'en', title: item.title || '', description: item.description || '', content: item.content || '' },
-        mn: { locale: 'mn', title: '', description: '', content: '' },
-        ch: { locale: 'ch', title: '', description: '', content: '' }
-      }
+      baseSlug: baseSlug || item.slug,
+      translations: {}
     }
+
+    // Initialize translations for each language
+    languages.forEach(lang => {
+      editingCollaborativeProjectsItem.value.translations[lang.code] =
+        lang.code === item.locale
+          ? { locale: lang.code, title: item.title || '', description: item.description || '', content: item.content || '' }
+          : { locale: lang.code, title: '', description: '', content: '' }
+    })
   }
 
   activeCollaborativeProjectsLanguage.value = 'en'
@@ -5601,16 +5661,16 @@ async function saveCollaborativeProjectsItem() {
 
   try {
     // Save/update each language that has content
-    const promises = languages.value.map(async (lang) => {
+    const promises = languages.map(async (lang) => {
       const translation = editingCollaborativeProjectsItem.value.translations[lang.code]
-      if (translation.title.trim()) { // Only save if title exists
-        const method = translation.id ? 'PUT' : 'POST'
-        const url = translation.id ? `/api/collaborative-projects/${translation.id}` : '/api/collaborative-projects'
-
-        return $fetch(url, {
-          method,
+      console.log(`Processing ${lang.code} translation:`, translation)
+      if (translation && translation.title && translation.title.trim()) { // Only save if title exists
+        const baseSlug = editingCollaborativeProjectsItem.value.baseSlug || editingCollaborativeProjectsItem.value.slug?.replace(/-(en|mn|ch)$/, '') || editingCollaborativeProjectsItem.value.slug
+        console.log(`Saving ${lang.code} with baseSlug:`, baseSlug)
+        return $fetch('/api/collaborative-projects', {
+          method: 'POST',
           body: {
-            slug: editingCollaborativeProjectsItem.value.slug,
+            slug: baseSlug,
             title: translation.title,
             description: translation.description,
             content: translation.content,
@@ -5621,13 +5681,15 @@ async function saveCollaborativeProjectsItem() {
             contactEmail: editingCollaborativeProjectsItem.value.contactEmail,
             contactPhone: editingCollaborativeProjectsItem.value.contactPhone,
             published: editingCollaborativeProjectsItem.value.published,
-            locale: lang.code
+            locale: lang.code,
+            upsert: true // Flag to indicate this should be an upsert operation
           }
         })
       }
     })
 
     const responses = await Promise.all(promises.filter(Boolean))
+    console.log('Collaborative Projects save responses:', responses)
     const allSuccessful = responses.every(response => response?.success)
 
     if (allSuccessful) {
@@ -5635,6 +5697,7 @@ async function saveCollaborativeProjectsItem() {
       showCollaborativeProjectsEditModal.value = false
       alert('Collaborative Projects item updated successfully!')
     } else {
+      console.error('Failed responses:', responses.filter(r => !r?.success))
       alert('Failed to update some translations')
     }
   } catch (error) {

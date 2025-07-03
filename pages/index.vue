@@ -90,7 +90,7 @@
       <CardItem v-for="(card, index) in limitedCards" :key="index" :item="card" />
     </div>
     <div class="see-more-container">
-      <router-link to="/news" class="see-more-btn" :class="{ 'vertical-text': isMongolian }">
+      <router-link :to="localePath('/news')" class="see-more-btn" :class="{ 'vertical-text': isMongolian }">
         {{ t('home.see') }}
       </router-link>
     </div>
