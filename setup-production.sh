@@ -77,10 +77,10 @@ else
     echo "✅ Database setup verified."
 fi
 
-echo "🎯 Starting production server..."
-cd .output/server && node index.mjs
-# cd .output/server
-# pm2 delete nuxt-app >/dev/null 2>&1 || true
-# pm2 start index.mjs --name nuxt-app
-# pm2 save
+# echo "🎯 Starting production server..."
+# cd .output/server && node index.mjs
+cd .output/server
+pm2 delete nuxt-app >/dev/null 2>&1 || true
+pm2 start index.mjs --name nuxt-app
+pm2 save
 
