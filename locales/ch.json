@@ -613,52 +613,52 @@
         "genericDescription": "发生了意外错误。请重试。",
         "goHome": "返回首页",
         "refresh": "刷新页面"
-        "links": {
-            "aboutUs": "关于我们",
-            "contact": "联系我们",
-            "careers": "加入我们",
-            "news": "新闻中心",
-            "products": "产品中心",
-            "services": "服务项目"
-        },
-        "section": {
-            "title1": "关于蒙泰",
-            "title2": "核心产业",
-            "title3": "高质量发展",
-            "title4": "新闻动态",
-            "title5": "对外合作"
-        },
-        "link1": {
-            "text1": "公司简介",
-            "text2": "董事长致辞",
-            "text3": "企业文化",
-            "text4": "发展历程",
-            "text5": "党建工作",
-            "text6": "加入我们"
-        },
-        "link2": {
-            "text1": "铝业板块",
-            "text2": "煤炭产业",
-            "text3": "热电板块",
-            "text4": "现代农牧业",
-            "text5": "现代商贸物流"
-        },
-        "link3": {
-            "text1": "科技蒙泰",
-            "text2": "绿色蒙泰",
-            "text3": "责任蒙泰"
-        },
-        "link4": {
-            "text1": "新闻中心",
-            "text2": "媒体资料"
-        },
-        "link5": {
-            "text1": "公司产品",
-            "text2": "合作项目",
-            "text3": "招标平台",
-            "text4": "线下招标公告",
-            "text5": "采购公告"
-        }
+    },
+    "links": {
+        "aboutUs": "关于我们",
+        "contact": "联系我们",
+        "careers": "加入我们",
+        "news": "新闻中心",
+        "products": "产品中心",
+        "services": "服务项目"
+    },
+    "section": {
+        "title1": "关于蒙泰",
+        "title2": "核心产业",
+        "title3": "高质量发展",
+        "title4": "新闻动态",
+        "title5": "对外合作"
+    },
+    "link1": {
+        "text1": "公司简介",
+        "text2": "董事长致辞",
+        "text3": "企业文化",
+        "text4": "发展历程",
+        "text5": "党建工作",
+        "text6": "加入我们"
+    },
+    "link2": {
+        "text1": "铝业板块",
+        "text2": "煤炭产业",
+        "text3": "热电板块",
+        "text4": "现代农牧业",
+        "text5": "现代商贸物流"
+    },
+    "link3": {
+        "text1": "科技蒙泰",
+        "text2": "绿色蒙泰",
+        "text3": "责任蒙泰"
+    },
+    "link4": {
+        "text1": "新闻中心",
+        "text2": "媒体资料"
+    },
+    "link5": {
+        "text1": "公司产品",
+        "text2": "合作项目",
+        "text3": "招标平台",
+        "text4": "线下招标公告",
+        "text5": "采购公告"
     },
     "mainHeader": {
         "aboutMonte": "蒙泰概况",

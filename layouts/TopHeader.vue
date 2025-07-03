@@ -197,17 +197,19 @@
 import { ref,onMounted, onUnmounted,computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-const { locale: currentLocale } = useI18n();
 
+const { locale: currentLocale } = useI18n();
+const { t } = useI18n();
+const router = useRouter();
+const route = useRoute();
 
 const activeMenu = ref<string | null>(null);
 const isMobileMenuOpen = ref(false);
 const isMobile = ref(false);
 const expandedSections = ref({ group: false, staff: false, language: false });
-const { t } = useI18n();
-
 
 const isMongolian = computed(() => currentLocale.value === 'mn');
+
 const checkMobile = () => {
  isMobile.value = window.innerWidth <= 768;
   if (!isMobile.value) {
@@ -242,23 +244,14 @@ const getLanguageDisplay = () => {
   }
 };
 
-
-const setLanguage = async (newLocale: 'en' | 'mn' | 'ch') => {
+const setLanguage = (newLocale: 'en' | 'mn' | 'ch') => {
   console.log('Switching to locale:', newLocale);
-  const router = useRouter();
-  const route = useRoute();
-
-  // Get current path without locale prefix
-  const currentPath = route.path.replace(/^\/(en|mn|ch)/, '') || '/';
-
-  // Navigate to the same path with new locale
-  await navigateTo(`/${newLocale}${currentPath}`, { replace: true });
+  currentLocale.value = newLocale;
 };
 
-
-const setLanguageAndClose = async (newLocale: 'en' | 'mn' | 'ch') => {
-  await setLanguage(newLocale);
-  closeMobileMenu();
+const setLanguageAndClose = (newLocale: 'en' | 'mn' | 'ch') => {
+  setLanguage(newLocale);
+  closeMobileMenu();;
 };
 
   onMounted(() => {
