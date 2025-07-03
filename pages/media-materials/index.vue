@@ -162,12 +162,12 @@ async function loadMediaMaterials() {
       }
     })
 
-    if (response && response.data) {
+    if (response && response.data && response.data.length > 0) {
       // Separate videos and images
       videos.value = response.data
         .filter((item: MediaMaterial) => item.type === 'video')
         .map((video: MediaMaterial) => ({
-          titleKey: video.title, // Use title directly
+          titleKey: video.title,
           src: video.path,
           poster: video.thumbnailPath || video.path,
           title: video.title,
@@ -178,15 +178,95 @@ async function loadMediaMaterials() {
         .filter((item: MediaMaterial) => item.type === 'image')
         .map((image: MediaMaterial) => ({
           image: image.path,
-          descriptionKey: image.title, // Use title as description key
+          descriptionKey: image.title,
           title: image.title,
           description: image.description,
           downloadUrl: image.path
         }))
+    } else {
+      // Fallback to static content from public folder
+      loadStaticContent()
     }
   } catch (error) {
     console.error('Failed to load media materials:', error)
+    // Fallback to static content
+    loadStaticContent()
   }
+}
+
+// Load static content from public folder
+function loadStaticContent() {
+  videos.value = [
+    {
+      titleKey: 'media.video.title1',
+      src: '/media/company-profile.mp4',
+      poster: '/media/banner.jpg',
+      title: t('media.video.title1')
+    },
+    {
+      titleKey: 'media.video.title2', 
+      src: '/media/carousel1.mp4',
+      poster: '/media/green.jpg',
+      title: t('media.video.title2')
+    }
+  ]
+
+  images.value = [
+    {
+      image: '/media/banner.jpg',
+      descriptionKey: 'media.picture.description1',
+      title: t('media.picture.description1'),
+      downloadUrl: '/media/banner.jpg'
+    },
+    {
+      image: '/media/center.jpg',
+      descriptionKey: 'media.picture.description2',
+      title: t('media.picture.description2'),
+      downloadUrl: '/media/center.jpg'
+    },
+    {
+      image: '/media/company-profile.mp4',
+      descriptionKey: 'media.picture.description3',
+      title: t('media.picture.description3'),
+      downloadUrl: '/media/company-profile.mp4'
+    },
+    {
+      image: '/media/green.jpg',
+      descriptionKey: 'media.picture.description4',
+      title: t('media.picture.description4'),
+      downloadUrl: '/media/green.jpg'
+    },
+    {
+      image: '/media/aluminium.jpg',
+      descriptionKey: 'media.picture.description5',
+      title: t('media.picture.description5'),
+      downloadUrl: '/media/aluminium.jpg'
+    },
+    {
+      image: '/media/alum1.jpg',
+      descriptionKey: 'media.picture.description6',
+      title: t('media.picture.description6'),
+      downloadUrl: '/media/alum1.jpg'
+    },
+    {
+      image: '/media/alum2.jpg',
+      descriptionKey: 'media.picture.description7',
+      title: t('media.picture.description7'),
+      downloadUrl: '/media/alum2.jpg'
+    },
+    {
+      image: '/media/alum3.jpg',
+      descriptionKey: 'media.picture.description8',
+      title: t('media.picture.description8'),
+      downloadUrl: '/media/alum3.jpg'
+    },
+    {
+      image: '/media/responsibility.jpg',
+      descriptionKey: 'media.picture.description9',
+      title: t('media.picture.description9'),
+      downloadUrl: '/media/responsibility.jpg'
+    }
+  ]
 }
 
 const activeTab = ref<'video' | 'picture'>('video')

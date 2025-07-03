@@ -33,9 +33,18 @@ export default defineEventHandler(async (event) => {
       take: pageSize
     })
 
+    // Ensure paths are accessible from public folder
+    const processedMaterials = materials.map(material => ({
+      ...material,
+      path: material.path.startsWith('/') ? material.path : `/${material.path}`,
+      thumbnailPath: material.thumbnailPath ? 
+        (material.thumbnailPath.startsWith('/') ? material.thumbnailPath : `/${material.thumbnailPath}`) : 
+        null
+    }))
+
     return {
       success: true,
-      data: materials,
+      data: processedMaterials,
       pagination: {
         page,
         pageSize,

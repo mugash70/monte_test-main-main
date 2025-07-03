@@ -604,8 +604,8 @@
 
 
           <!-- Translation Edit Modal -->
-          <div v-if="showEditModal" class="cms-modal-overlay" @click="closeEditModal">
-            <div class="cms-modal" @click.stop>
+          <div v-if="showEditModal" class="cms-modal-overlay" @click="closeEditModal" translate="no">
+            <div class="cms-modal" @click.stop translate="no">
               <div class="cms-modal-header">
                 <div class="modal-header-content">
                   <h3 class="cms-modal-title">Edit Translation: {{ selectedKey }}</h3>
@@ -1375,8 +1375,8 @@
 
   <!-- News Form Modal -->
   <Transition name="modal">
-    <div v-if="showNewsForm" class="modal-overlay" @click="showNewsForm = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showNewsForm" class="modal-overlay" @click="showNewsForm = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Add News Article</h3>
           <button @click="showNewsForm = false" class="modal-close">
@@ -1627,8 +1627,8 @@
 
   <!-- Media Form Modal -->
   <Transition name="modal">
-    <div v-if="showMediaForm" class="modal-overlay" @click="showMediaForm = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showMediaForm" class="modal-overlay" @click="showMediaForm = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <div class="modal-header-content">
             <h3 class="modal-title">Add Media Material</h3>
@@ -1854,8 +1854,8 @@
 
   <!-- News Edit Modal -->
   <Transition name="modal">
-    <div v-if="showNewsEditModal" class="modal-overlay" @click="showNewsEditModal = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showNewsEditModal" class="modal-overlay" @click="showNewsEditModal = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <div class="modal-header-content">
             <h3 class="modal-title">Edit News Group</h3>
@@ -1968,8 +1968,8 @@
 
   <!-- Media Edit Modal -->
   <Transition name="modal">
-    <div v-if="showMediaEditModal" class="modal-overlay" @click="showMediaEditModal = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showMediaEditModal" class="modal-overlay" @click="showMediaEditModal = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <div class="modal-header-content">
             <h3 class="modal-title">Edit Media Group</h3>
@@ -2069,8 +2069,8 @@
 
   <!-- Join Us Form Modal -->
   <Transition name="modal">
-    <div v-if="showJoinUsForm" class="modal-overlay" @click="showJoinUsForm = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showJoinUsForm" class="modal-overlay" @click="showJoinUsForm = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Add Join Us Item</h3>
           <button @click="showJoinUsForm = false" class="modal-close">×</button>
@@ -2268,8 +2268,8 @@
 
   <!-- Party Building Form Modal -->
   <Transition name="modal">
-    <div v-if="showPartyBuildingForm" class="modal-overlay" @click="showPartyBuildingForm = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showPartyBuildingForm" class="modal-overlay" @click="showPartyBuildingForm = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Add Party Building Article</h3>
           <button @click="showPartyBuildingForm = false" class="modal-close">×</button>
@@ -2431,8 +2431,8 @@
 
   <!-- Development History Form Modal -->
   <Transition name="modal">
-    <div v-if="showDevelopmentHistoryForm" class="modal-overlay" @click="showDevelopmentHistoryForm = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showDevelopmentHistoryForm" class="modal-overlay" @click="showDevelopmentHistoryForm = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Add Development Milestone</h3>
           <button @click="showDevelopmentHistoryForm = false" class="modal-close">×</button>
@@ -2544,8 +2544,8 @@
 
   <!-- Collaborative Projects Form Modal -->
   <Transition name="modal">
-    <div v-if="showCollaborativeProjectsForm" class="modal-overlay" @click="showCollaborativeProjectsForm = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showCollaborativeProjectsForm" class="modal-overlay" @click="showCollaborativeProjectsForm = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Add Collaborative Project</h3>
           <button @click="showCollaborativeProjectsForm = false" class="modal-close">×</button>
@@ -2710,8 +2710,8 @@
 
   <!-- Join Us Edit Modal -->
   <Transition name="modal">
-    <div v-if="showJoinUsEditModal" class="modal-overlay" @click="showJoinUsEditModal = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showJoinUsEditModal" class="modal-overlay" @click="showJoinUsEditModal = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Edit Join Us Item</h3>
           <button @click="showJoinUsEditModal = false" class="modal-close">×</button>
@@ -2799,8 +2799,8 @@
 
   <!-- Party Building Edit Modal -->
   <Transition name="modal">
-    <div v-if="showPartyBuildingEditModal && editingPartyBuildingItem?.translations" class="modal-overlay" @click="showPartyBuildingEditModal = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showPartyBuildingEditModal && editingPartyBuildingItem?.translations" class="modal-overlay" @click="showPartyBuildingEditModal = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Edit Party Building Item</h3>
           <button @click="showPartyBuildingEditModal = false" class="modal-close">×</button>
@@ -2877,8 +2877,8 @@
 
   <!-- Development History Edit Modal -->
   <Transition name="modal">
-    <div v-if="showDevelopmentHistoryEditModal && editingDevelopmentHistoryItem?.translations" class="modal-overlay" @click="showDevelopmentHistoryEditModal = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showDevelopmentHistoryEditModal && editingDevelopmentHistoryItem?.translations" class="modal-overlay" @click="showDevelopmentHistoryEditModal = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Edit Development History Item</h3>
           <button @click="showDevelopmentHistoryEditModal = false" class="modal-close">×</button>
@@ -2937,8 +2937,8 @@
 
   <!-- Collaborative Projects Edit Modal -->
   <Transition name="modal">
-    <div v-if="showCollaborativeProjectsEditModal && editingCollaborativeProjectsItem?.translations" class="modal-overlay" @click="showCollaborativeProjectsEditModal = false">
-      <div class="modal-container" @click.stop>
+    <div v-if="showCollaborativeProjectsEditModal && editingCollaborativeProjectsItem?.translations" class="modal-overlay" @click="showCollaborativeProjectsEditModal = false" translate="no">
+      <div class="modal-container" @click.stop translate="no">
         <div class="modal-header">
           <h3 class="modal-title">Edit Collaborative Projects Item</h3>
           <button @click="showCollaborativeProjectsEditModal = false" class="modal-close">×</button>
